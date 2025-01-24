@@ -1,13 +1,14 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113
+VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online-Assessment", "Online-Assessment.csproj", "{379142B7-5974-4A35-999C-EA47980B4A2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online-Assessment", "Online-Assessment\Online-Assessment.csproj", "{287590C4-1229-4A76-883B-5C83E6DC0378}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebAssembleApp", "..\BlazorWebAssembleApp\BlazorWebAssembleApp.csproj", "{05B7F1C2-A8C1-4B5C-95A4-4A8051BB63CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online-Assessment.Shared", "Online-Assessment.Shared\Online-Assessment.Shared.csproj", "{3792DC7B-E0EC-44ED-9FDA-5BC5542AE0A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedRazorClassLibraryForAll", "..\SharedRazorClassLibraryForAll\SharedRazorClassLibraryForAll.csproj", "{0B026E3D-AF82-4DA7-8C4D-3FC53BDBE1BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online-Assessment.Web", "Online-Assessment.Web\Online-Assessment.Web.csproj", "{52388487-2A68-4D12-BDD4-903524066BC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online-Assessment.Web.Client", "Online-Assessment.Web.Client\Online-Assessment.Web.Client.csproj", "{A1F6F8C1-5213-45CC-BB63-2C2F2BC114CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +16,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{379142B7-5974-4A35-999C-EA47980B4A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{379142B7-5974-4A35-999C-EA47980B4A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{379142B7-5974-4A35-999C-EA47980B4A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{379142B7-5974-4A35-999C-EA47980B4A2D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05B7F1C2-A8C1-4B5C-95A4-4A8051BB63CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05B7F1C2-A8C1-4B5C-95A4-4A8051BB63CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05B7F1C2-A8C1-4B5C-95A4-4A8051BB63CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05B7F1C2-A8C1-4B5C-95A4-4A8051BB63CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B026E3D-AF82-4DA7-8C4D-3FC53BDBE1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B026E3D-AF82-4DA7-8C4D-3FC53BDBE1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B026E3D-AF82-4DA7-8C4D-3FC53BDBE1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B026E3D-AF82-4DA7-8C4D-3FC53BDBE1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{287590C4-1229-4A76-883B-5C83E6DC0378}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{287590C4-1229-4A76-883B-5C83E6DC0378}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{287590C4-1229-4A76-883B-5C83E6DC0378}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{287590C4-1229-4A76-883B-5C83E6DC0378}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3792DC7B-E0EC-44ED-9FDA-5BC5542AE0A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3792DC7B-E0EC-44ED-9FDA-5BC5542AE0A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3792DC7B-E0EC-44ED-9FDA-5BC5542AE0A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3792DC7B-E0EC-44ED-9FDA-5BC5542AE0A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52388487-2A68-4D12-BDD4-903524066BC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52388487-2A68-4D12-BDD4-903524066BC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52388487-2A68-4D12-BDD4-903524066BC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52388487-2A68-4D12-BDD4-903524066BC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1F6F8C1-5213-45CC-BB63-2C2F2BC114CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F6F8C1-5213-45CC-BB63-2C2F2BC114CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F6F8C1-5213-45CC-BB63-2C2F2BC114CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F6F8C1-5213-45CC-BB63-2C2F2BC114CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
