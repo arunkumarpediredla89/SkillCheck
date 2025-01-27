@@ -86,7 +86,7 @@ h1:focus {
 }
 
 .assessment-header {
-    text-align: center; /* Center the text inside the label */
+    text-align: end; /* Center the text inside the label */
 }
 
 .horizontal-stack-layout {
