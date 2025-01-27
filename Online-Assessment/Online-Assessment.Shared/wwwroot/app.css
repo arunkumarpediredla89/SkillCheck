@@ -49,3 +49,74 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.scroll-view {
+    overflow-y: scroll;
+    height: 100vh; /* Full viewport height */
+}
+
+.assessment-header {
+    font-size: 2rem; /* 2 times the root font size (typically 16px) */
+    font-
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 20px; /* This controls both row and column spacing */
+    grid-row-gap: 30px; /* Increase row gap for more space between rows */
+    margin-top: 20px;
+}
+
+
+.centered-grid {
+    display: flex;
+    justify-content: start; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 100%; /* Makes sure the container takes up the full height of the viewport */
+    flex-direction: column; /* Aligns the content vertically */
+}
+
+.vertical-stack-layout {
+    display: flex; /* Use Flexbox */
+    flex-direction: column;
+    justify-content: flex-start; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 10vh; /* Optional: Makes sure the div takes up the full viewport height */
+}
+
+.assessment-header {
+    text-align: center; /* Center the text inside the label */
+}
+
+.horizontal-stack-layout {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #0070ad;
+    color: white;
+}
+
+.btn-info {
+    background-color: #12ABDB;
+    color: white;
+}
+
+.btn-light {
+    background-color: #e0e0e0;
+    color: #0070ad;
+}
+
+.label {
+    color: #707070;
+    text-align: center;
+    vertical-align: middle;
+}
+
