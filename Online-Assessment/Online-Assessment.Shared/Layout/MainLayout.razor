@@ -59,8 +59,18 @@
             {
                 // Add your logic to validate login here (if needed)
 
-                // After login logic, navigate to the desired page
-                Navigation.NavigateTo("/counter");  // Change "/home" to the page URL you want to navigate to
+                // Validate login (example)
+                bool isValid = true; // Example condition, replace with actual validation logic
+
+                if (isValid)
+                {
+                    // After login logic, navigate to the desired page
+                    Navigation.NavigateTo("/counter");
+                }
+                else
+                {
+                    // Handle invalid login case (e.g., show error message)
+                }
             }
         }
     </main>
