@@ -1,0 +1,334 @@
+{
+  "questions": [
+    {
+      "question": "What is .NET MAUI?",
+      "options": [
+        "A. A framework for building Windows desktop apps only",
+        "B. A cross-platform framework for building native mobile and desktop apps",
+        "C. A framework for building web applications",
+        "D. A game development framework"
+      ],
+      "answer": "B",
+      "priority": "Low"
+    },
+    {
+      "question": "Which programming language is used for .NET MAUI development?",
+      "options": [
+        "A. Python",
+        "B. JavaScript",
+        "C. C#",
+        "D. Kotlin"
+      ],
+      "answer": "C",
+      "priority": "Low"
+    },
+    {
+      "question": "Which platforms are supported by .NET MAUI?",
+      "options": [
+        "A. Android, iOS, macOS, and Windows",
+        "B. Linux, macOS, and Windows",
+        "C. iOS, Android, and Web",
+        "D. Android and Windows only"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+    {
+      "question": "What does MAUI stand for in .NET MAUI?",
+      "options": [
+        "A. Microsoft Application Universal Interface",
+        "B. Multiplatform App UI",
+        "C. Mobile App UI",
+        "D. Managed Application Universal Integration"
+      ],
+      "answer": "B",
+      "priority": "Low"
+    },
+    {
+      "question": "What is the primary design pattern used in .NET MAUI applications?",
+      "options": [
+        "A. MVC",
+        "B. MVVM",
+        "C. MVP",
+        "D. Factory"
+      ],
+      "answer": "B",
+      "priority": "Low"
+    },
+    {
+      "question": "What is XAML in .NET MAUI?",
+      "options": [
+        "A. A language used to define UI layout and appearance",
+        "B. A database query language",
+        "C. A JavaScript framework",
+        "D. A testing library for .NET applications"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+    {
+      "question": "Which file serves as the entry point for a .NET MAUI app?",
+      "options": [
+        "A. App.xaml.cs",
+        "B. Startup.cs",
+        "C. MainPage.xaml",
+        "D. Program.cs"
+      ],
+      "answer": "D",
+      "priority": "Low"
+    },
+    {
+      "question": "What does the ContentPage class represent in .NET MAUI?",
+      "options": [
+        "A. A page used to display scrolling lists",
+        "B. A page used to render web content",
+        "C. A simple page with a single content layout",
+        "D. A popup page for modals"
+      ],
+      "answer": "C",
+      "priority": "Low"
+    },
+    {
+      "question": "What is the primary method for navigating between pages in .NET MAUI?",
+      "options": [
+        "A. Using Shell navigation",
+        "B. Using HttpClient",
+        "C. Using DataContext",
+        "D. Using CommandManager"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+    {
+      "question": "How do you apply styles globally in .NET MAUI?",
+      "options": [
+        "A. Add them to App.xaml",
+        "B. Define them in MainPage.xaml",
+        "C. Use inline styles only",
+        "D. Use a CSS file"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+      {
+        "question": "What is the primary purpose of Shell in .NET MAUI?",
+        "options": [
+          "A. To define themes for the application",
+          "B. To simplify navigation and app structure",
+          "C. To create animations",
+          "D. To handle API requests"
+        ],
+        "answer": "B",
+        "priority": "Medium"
+      },
+      {
+        "question": "How do you bind data to UI components in .NET MAUI?",
+        "options": [
+          "A. Using XAML bindings with {Binding}",
+          "B. Using inline JavaScript",
+          "C. Using HTML attributes",
+          "D. Using CSS classes"
+        ],
+        "answer": "A",
+        "priority": "Medium"
+      },
+      {
+        "question": "Which component is used to create a collection-based UI in .NET MAUI?",
+        "options": [
+          "A. ScrollView",
+          "B. CollectionView",
+          "C. DataGrid",
+          "D. ListBox"
+        ],
+        "answer": "B",
+        "priority": "Medium"
+      },
+      {
+        "question": "How do you handle lifecycle events in .NET MAUI?",
+        "options": [
+          "A. Override lifecycle methods in App.xaml.cs",
+          "B. Use event listeners in Program.cs",
+          "C. Override lifecycle methods in ContentPage",
+          "D. Add lifecycle handlers in MainPage.xaml"
+        ],
+        "answer": "C",
+        "priority": "Medium"
+      },
+      {
+        "question": "What does ICommand do in .NET MAUI?",
+        "options": [
+          "A. Handles HTTP commands",
+          "B. Manages commands in MVVM architecture",
+          "C. Acts as a navigation command",
+          "D. Implements animations"
+        ],
+        "answer": "B",
+        "priority": "Medium"
+      },
+      {
+        "question": "Which layout organizes elements in a stack vertically or horizontally?",
+        "options": [
+          "A. AbsoluteLayout",
+          "B. StackLayout",
+          "C. Grid",
+          "D. FlexLayout"
+        ],
+        "answer": "B",
+        "priority": "Medium"
+      },
+      {
+        "question": "How do you display an alert dialog in .NET MAUI?",
+        "options": [
+          "A. DisplayAlert()",
+          "B. ShowAlert()",
+          "C. AlertBox()",
+          "D. Popup.Show()"
+        ],
+        "answer": "A",
+        "priority": "Medium"
+      },
+      {
+        "question": "What is Dependency Injection in .NET MAUI used for?",
+        "options": [
+          "A. To handle navigation",
+          "B. To register and resolve services in an application",
+          "C. To bind data to UI elements",
+          "D. To improve app layout"
+        ],
+        "answer": "B",
+        "priority": "Medium"
+      },
+      {
+        "question": "Which class is used for platform-specific implementations in .NET MAUI?",
+        "options": [
+          "A. PlatformService",
+          "B. DependencyService",
+          "C. PlatformClass",
+          "D. PlatformManager"
+        ],
+        "answer": "B",
+        "priority": "Medium"
+      },
+      {
+        "question": "How can you handle platform-specific behavior in .NET MAUI?",
+        "options": [
+          "A. Use DeviceInfo API",
+          "B. Use dependency injection with platform-specific implementations",
+          "C. Create platform-specific files",
+          "D. All of the above"
+        ],
+        "answer": "D",
+        "priority": "Medium"
+      },
+      {
+        "question": "How do you implement custom renderers in .NET MAUI?",
+        "options": [
+          "A. By extending the default controls for a platform",
+          "B. By creating a service in App.xaml.cs",
+          "C. By using CSS files for styling",
+          "D. By adding inline JavaScript"
+        ],
+        "answer": "A",
+        "priority": "High"
+      },
+      {
+        "question": "What is the purpose of OnPlatform in .NET MAUI?",
+        "options": [
+          "A. To switch between development and production environments",
+          "B. To specify platform-specific values in XAML",
+          "C. To debug platform-specific issues",
+          "D. To implement animations for mobile platforms"
+        ],
+        "answer": "B",
+        "priority": "High"
+      },
+      {
+        "question": "What is the primary purpose of Effects in .NET MAUI?",
+        "options": [
+          "A. To handle animations",
+          "B. To modify platform-specific properties of UI components",
+          "C. To create visual effects for pages",
+          "D. To define global styles"
+        ],
+        "answer": "B",
+        "priority": "High"
+      },
+      {
+        "question": "What does Hot Reload do in .NET MAUI?",
+        "options": [
+          "A. Restarts the application after changes",
+          "B. Updates the application UI in real-time without restarting the app",
+          "C. Clears the app cache",
+          "D. Reloads static resources only"
+        ],
+        "answer": "B",
+        "priority": "High"
+      },
+      {
+        "question": "How do you improve performance in a .NET MAUI app?",
+        "options": [
+          "A. Use compiled bindings (x:DataType)",
+          "B. Avoid using large images in UI",
+          "C. Use CollectionView instead of ListView",
+          "D. All of the above"
+        ],
+        "answer": "D",
+        "priority": "High"
+      },
+      {
+        "question": "What is the difference between ListView and CollectionView?",
+        "options": [
+          "A. CollectionView offers better performance and customization",
+          "B. ListView supports better animations",
+          "C. CollectionView is deprecated",
+          "D. Both are the same"
+        ],
+        "answer": "A",
+        "priority": "High"
+      },
+      {
+        "question": "How do you use localization in .NET MAUI?",
+        "options": [
+          "A. Add resource files for each language",
+          "B. Use CultureInfo to set the app language",
+          "C. Bind strings to resource files",
+          "D. All of the above"
+        ],
+        "answer": "D",
+        "priority": "High"
+      },
+      {
+        "question": "How can you integrate native platform APIs in .NET MAUI?",
+        "options": [
+          "A. Use Platform.invoke()",
+          "B. Use platform-specific implementation with dependency injection",
+          "C. Use CustomRenderer",
+          "D. Both B and C"
+        ],
+        "answer": "D",
+        "priority": "High"
+      },
+      {
+        "question": "What is the Handler architecture in .NET MAUI?",
+        "options": [
+          "A. A replacement for custom renderers to manage native control mappings",
+          "B. A library for dependency injection",
+          "C. A layout for handling touch gestures",
+          "D. A framework for navigation"
+        ],
+        "answer": "A",
+        "priority": "High"
+      },
+      {
+        "question": "How do you implement multi-targeting in .NET MAUI?",
+        "options": [
+          "A. Use platform-specific folders in the project",
+          "B. Add platform-specific conditional compilation",
+          "C. Use shared code for common functionality",
+          "D. All of the above"
+        ],
+        "answer": "D",
+        "priority": "High"
+      }
+  ]
+}

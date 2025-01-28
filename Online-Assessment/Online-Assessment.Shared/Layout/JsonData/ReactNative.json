@@ -1,0 +1,335 @@
+{
+  "questions": [
+    {
+      "question": "What is React Native?",
+      "options": [
+        "A. A web framework for building websites",
+        "B. A library for building cross-platform mobile apps using JavaScript",
+        "C. A tool for creating native desktop applications",
+        "D. A version control system"
+      ],
+      "answer": "B",
+      "priority": "Low"
+    },
+    {
+      "question": "Which language is primarily used in React Native?",
+      "options": [
+        "A. JavaScript",
+        "B. Python",
+        "C. Java",
+        "D. Swift"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+    {
+      "question": "Which core component is used to create a container in React Native?",
+      "options": [
+        "A. View",
+        "B. Container",
+        "C. Div",
+        "D. Frame"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+    {
+      "question": "How do you define styles in React Native?",
+      "options": [
+        "A. Inline styles or StyleSheet.create()",
+        "B. Using external CSS files",
+        "C. Using SCSS",
+        "D. Using JavaScript variables only"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+    {
+      "question": "What does the useState hook do?",
+      "options": [
+        "A. It manages local component state",
+        "B. It handles API requests",
+        "C. It performs side effects",
+        "D. It provides access to global state"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+    {
+      "question": "Which component is used to render scrollable content?",
+      "options": [
+        "A. FlatList",
+        "B. ScrollView",
+        "C. SectionList",
+        "D. Text"
+      ],
+      "answer": "B",
+      "priority": "Low"
+    },
+    {
+      "question": "Which file is the entry point for a React Native application?",
+      "options": [
+        "A. App.js",
+        "B. index.js",
+        "C. Main.js",
+        "D. App.json"
+      ],
+      "answer": "B",
+      "priority": "Low"
+    },
+    {
+      "question": "Which command runs a React Native app in development mode?",
+      "options": [
+        "A. npm run start",
+        "B. npx react-native run-android",
+        "C. npm react-native start",
+        "D. npx create-react-native-app"
+      ],
+      "answer": "B",
+      "priority": "Low"
+    },
+    {
+      "question": "What is JSX?",
+      "options": [
+        "A. A syntax extension for JavaScript used in React Native",
+        "B. A JavaScript compiler",
+        "C. A styling library for React Native",
+        "D. A database query language"
+      ],
+      "answer": "A",
+      "priority": "Low"
+    },
+    {
+      "question": "How do you add comments in JSX?",
+      "options": [
+        "A. // Comment",
+        "B. {/* Comment */}",
+        "C. <!-- Comment -->",
+        "D. # Comment"
+      ],
+      "answer": "B",
+      "priority": "Low"
+    },
+    {
+      "question": "Which library is commonly used for navigation in React Native?",
+      "options": [
+        "A. react-router",
+        "B. react-navigation",
+        "C. navigator-react",
+        "D. react-router-dom"
+      ],
+      "answer": "B",
+      "priority": "Medium"
+    },
+    {
+      "question": "What is the purpose of the keyExtractor property in FlatList?",
+      "options": [
+        "A. To provide unique keys for list items",
+        "B. To sort the list alphabetically",
+        "C. To filter the list data",
+        "D. To format the list items"
+      ],
+      "answer": "A",
+      "priority": "Medium"
+    },
+    {
+      "question": "Which property makes a component take up all available space in React Native?",
+      "options": [
+        "A. flex: 1",
+        "B. width: 100%",
+        "C. expand: true",
+        "D. grow: 1"
+      ],
+      "answer": "A",
+      "priority": "Medium"
+    },
+    {
+      "question": "How do you use platform-specific code in React Native?",
+      "options": [
+        "A. Use Platform.OS",
+        "B. Create .ios.js and .android.js files",
+        "C. Use Platform.select()",
+        "D. All of the above"
+      ],
+      "answer": "D",
+      "priority": "Medium"
+    },
+    {
+      "question": "Which React Native component is used to handle gestures?",
+      "options": [
+        "A. TouchableOpacity",
+        "B. TouchableHighlight",
+        "C. TouchableWithoutFeedback",
+        "D. All of the above"
+      ],
+      "answer": "D",
+      "priority": "Medium"
+    },
+    {
+      "question": "What does useEffect do in React Native?",
+      "options": [
+        "A. Manages component state",
+        "B. Handles side effects like fetching data or updating the DOM",
+        "C. Optimizes performance",
+        "D. Provides lifecycle methods"
+      ],
+      "answer": "B",
+      "priority": "Medium"
+    },
+    {
+      "question": "Which command installs a new dependency in a React Native project?",
+      "options": [
+        "A. npx add <dependency>",
+        "B. npm install <dependency>",
+        "C. npx create-react-native-app <dependency>",
+        "D. react-native add <dependency>"
+      ],
+      "answer": "B",
+      "priority": "Medium"
+    },
+    {
+      "question": "What is the purpose of SectionList in React Native?",
+      "options": [
+        "A. To display a static list",
+        "B. To display a list divided into sections",
+        "C. To handle pagination in lists",
+        "D. To optimize list performance"
+      ],
+      "answer": "B",
+      "priority": "Medium"
+    },
+    {
+      "question": "How do you debug a React Native app?",
+      "options": [
+        "A. Use Chrome Developer Tools",
+        "B. Use React Native Debugger",
+        "C. Use Flipper",
+        "D. All of the above"
+      ],
+      "answer": "D",
+      "priority": "Medium"
+    },
+    {
+      "question": "What is the purpose of TouchableOpacity?",
+      "options": [
+        "A. To make a button with opacity feedback when pressed",
+        "B. To handle text animations",
+        "C. To create a scrollable component",
+        "D. To add gestures to a list"
+      ],
+      "answer": "A",
+      "priority": "Medium"
+    },  
+    {
+      "question": "What is the Metro bundler?",
+      "options": [
+        "A. A testing library for React Native",
+        "B. A JavaScript bundler optimized for React Native apps",
+        "C. A state management tool",
+        "D. A library for animations"
+      ],
+      "answer": "B",
+      "priority": "High"
+    },
+    {
+      "question": "Which library is commonly used for animations in React Native?",
+      "options": [
+        "A. React Spring",
+        "B. React Native Reanimated",
+        "C. Anime.js",
+        "D. GreenSock"
+      ],
+      "answer": "B",
+      "priority": "High"
+    },
+    {
+      "question": "What is the purpose of React.memo?",
+      "options": [
+        "A. To create a functional component",
+        "B. To optimize rendering by memoizing the component",
+        "C. To handle asynchronous operations",
+        "D. To fetch data from an API"
+      ],
+      "answer": "B",
+      "priority": "High"
+    },
+    {
+      "question": "What is useReducer used for in React Native?",
+      "options": [
+        "A. Managing local state in complex components",
+        "B. Handling animations",
+        "C. Managing navigation state",
+        "D. Debugging application state"
+      ],
+      "answer": "A",
+      "priority": "High"
+    },
+    {
+      "question": "Which component is used for lazy loading in lists?",
+      "options": [
+        "A. ScrollView",
+        "B. FlatList",
+        "C. SectionList",
+        "D. VirtualizedList"
+      ],
+      "answer": "D",
+      "priority": "High"
+    },
+    {
+      "question": "How would you optimize a list with thousands of items in React Native?",
+      "options": [
+        "A. Use FlatList with keyExtractor and getItemLayout",
+        "B. Use ScrollView",
+        "C. Render all items at once",
+        "D. Use SectionList without optimizations"
+      ],
+      "answer": "A",
+      "priority": "High"
+    },
+    {
+      "question": "What does Hermes do in React Native?",
+      "options": [
+        "A. A testing framework for React Native apps",
+        "B. A JavaScript engine optimized for React Native on Android",
+        "C. A state management library",
+        "D. A debugger for iOS apps"
+      ],
+      "answer": "B",
+      "priority": "High"
+    },
+    {
+      "question": "How do you handle global state in a React Native application?",
+      "options": [
+        "A. Use Redux",
+        "B. Use Context API",
+        "C. Use MobX",
+        "D. All of the above"
+      ],
+      "answer": "D",
+      "priority": "High"
+    },
+    {
+      "question": "What is the purpose of Flipper in React Native development?",
+      "options": [
+        "A. A navigation library",
+        "B. A debugging tool",
+        "C. A state management tool",
+        "D. A library for animations"
+      ],
+      "answer": "B",
+      "priority": "High"
+    },
+    {
+      "question": "How do you handle deep linking in a React Native app?",
+      "options": [
+        "A. Using react-navigation",
+        "B. Using Linking API",
+        "C. Configuring in App.json or AndroidManifest.xml",
+        "D. All of the above"
+      ],
+      "answer": "D",
+      "priority": "High"
+    }
+
+  ]
+}
