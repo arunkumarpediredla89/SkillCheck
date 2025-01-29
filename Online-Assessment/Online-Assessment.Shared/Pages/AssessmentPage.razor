@@ -1,0 +1,154 @@
+﻿@page "/assessmentPage"
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@using System.Collections.Generic
+
+<PageTitle>ReactNative Exam</PageTitle>
+
+<!-- Exam Header -->
+<div class="exam-header">
+    <h1 class="exam-title">ReactNative Exam</h1>
+    <span class="time-left"><strong>Time Left:</strong> @TimeRemaining</span>
+</div>
+
+<!-- Question Section -->
+<h3 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h3>
+<p class="question-text">@CurrentQuestion.QuestionText</p>
+
+<!-- Options -->
+<div class="options">
+    @foreach (var option in CurrentQuestion.Options)
+    {
+        <label class="option-label">
+            <input type="radio" name="option" value="@option"
+                   checked="@(SelectedOption == option)"
+                   @onchange="(() => SelectOption(option))" />
+            @option
+        </label>
+    }
+</div>
+
+<!-- Navigation Buttons -->
+<div class="navigation">
+    @if (!IsLastQuestion)
+    {
+        <button @onclick="NextQuestion" class="btn btn-primary">Next</button>
+    }
+    else
+    {
+        <button @onclick="SubmitExam" class="btn btn-success">Submit</button>
+    }
+</div>
+
+<style>
+    .exam-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .exam-title {
+        color: #0070AD;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .time-left {
+        font-size: 14px;
+        background: #f1f1f1;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .question-number {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .question-text {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .options {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .option-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        background: #f9f9f9;
+        margin: 5px 0;
+        cursor: pointer;
+    }
+
+    .navigation {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 5px;
+    }
+</style>
+
+@code {
+    private string TimeRemaining = DateTime.Now.AddSeconds(20).ToString("HH:mm:ss");
+    private List<QuestionModel> Questions = new()
+    {
+        new QuestionModel { QuestionText = "What is React Native?", Options = new List<string> { "A web framework", "A mobile app library", "A desktop tool", "A VCS" }, CorrectAnswer = "A mobile app library" },
+        new QuestionModel { QuestionText = "Which language is used in React Native?", Options = new List<string> { "JavaScript", "Python", "Java", "Swift" }, CorrectAnswer = "JavaScript" },
+        new QuestionModel { QuestionText = "Which core component creates a container?", Options = new List<string> { "View", "Container", "Div", "Frame" }, CorrectAnswer = "View" },
+        new QuestionModel { QuestionText = "Which is NOT a valid React Native component?", Options = new List<string> { "Text", "Button", "Image", "Link" }, CorrectAnswer = "Link" },
+        new QuestionModel { QuestionText = "Which component is used to render scrollable content?", Options = new List<string> { "FlatList", "ScrollView", "SectionList", "Text" }, CorrectAnswer = "ScrollView" },
+        new QuestionModel { QuestionText = "Which file is the entry point?", Options = new List<string> { "App.js", "Index.js", "Main.js", "App.json" }, CorrectAnswer = "Index.js" },
+        new QuestionModel { QuestionText = "Command to run a React Native app on Android?", Options = new List<string> { "react-native run-android", "react-native run-ios", "npm start", "npx react-native run-android" }, CorrectAnswer = "npx react-native run-android" },
+        new QuestionModel { QuestionText = "Command to run React Native app in dev mode?", Options = new List<string> { "react-native run-android", "react-native run-ios", "npm start", "npx react-native run-ios" }, CorrectAnswer = "react-native run-android" },
+        new QuestionModel { QuestionText = "Command to create a new React Native project?", Options = new List<string> { "react-native init", "npx create-react-native-app", "npm init react-native", "npx react-native init" }, CorrectAnswer = "npx react-native init" },
+        new QuestionModel { QuestionText = "Command to install React Native CLI globally?", Options = new List<string> { "npm install -g react-native-cli", "npm install -g create-react-native-app", "npm install -g react-native", "npm install -g npx" }, CorrectAnswer = "npm install -g react-native-cli" }
+    };
+
+    private int CurrentQuestionIndex = 0;
+    private string SelectedOption = "";
+
+    private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
+
+    private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
+
+    private void SelectOption(string option)
+    {
+        SelectedOption = option;
+        CurrentQuestion.SelectedAnswer = option;
+    }
+
+    private void NextQuestion()
+    {
+        if (!IsLastQuestion)
+        {
+            CurrentQuestionIndex++;
+            SelectedOption = CurrentQuestion.SelectedAnswer;
+        }
+    }
+
+    private void SubmitExam()
+    {
+        // Exam submission logic
+    }
+
+    public class QuestionModel
+    {
+        public string QuestionText { get; set; }
+        public List<string> Options { get; set; }
+        public string CorrectAnswer { get; set; }
+        public string SelectedAnswer { get; set; }
+    }
+}
+
