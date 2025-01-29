@@ -1,0 +1,117 @@
+﻿@page "/OnlineExam"
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@using System.Collections.Generic
+
+<PageTitle>Online Exam</PageTitle>
+
+<div class="centered-grid">
+    <!-- Exam Header -->
+    <div class="centered-grid">
+         <!-- Header Section -->
+                <div class="vertical-stack-layout" style="margin-top: 50px">
+                    <label class="assessment-header" style="color:#0070AD;">
+                        Online Exam
+                    </label>
+                </div>
+
+
+        <div class="exam-info">
+            <span>Subject: @SubjectName</span>
+            <span>Time Remaining: @TimeRemaining</span>
+        </div>
+    </div>
+
+    <!-- Question Section -->
+    <div class="question-section">
+        <h2>@($"Question {CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
+        <p>@CurrentQuestion.QuestionText</p>
+
+        <!-- Options -->
+        <div class="options">
+            @foreach (var option in CurrentQuestion.Options)
+            {
+                <label>
+                    <input type="radio" name="option" value="@option"
+                           checked="@(SelectedOption == option)" 
+                           @onchange="(() => SelectOption(option))" />
+                    @option
+                </label>
+            }
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation">
+        <button @onclick="PreviousQuestion" class="btn btn-info" disabled="@IsFirstQuestion">Previous</button>
+        <button @onclick="NextQuestion" class="btn btn-info" disabled="@IsLastQuestion">Next</button>
+        <button @onclick="SubmitExam" class="submit-button" disabled="@CanSubmit">Submit</button>
+    </div>
+</div>
+
+@code {
+    private string SubjectName = ".Net MAUI";
+    private string TimeRemaining = DateTime.Now.AddMinutes(30).ToString("HH:mm:ss");
+
+    private List<QuestionModel> Questions = new()
+    {
+        new QuestionModel
+        {
+            QuestionText = "What is 2 + 2?",
+            Options = new List<string> { "3", "4", "5", "6" },
+            CorrectAnswer = "4"
+        },
+        new QuestionModel
+        {
+            QuestionText = "What is the capital of France?",
+            Options = new List<string> { "Berlin", "Paris", "Madrid", "Rome" },
+            CorrectAnswer = "Paris"
+        }
+    };
+
+    private int CurrentQuestionIndex = 0;
+    private string SelectedOption = "";
+
+    private bool IsFirstQuestion => CurrentQuestionIndex == 0;
+    private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
+    private bool CanSubmit => Questions.All(q => !string.IsNullOrEmpty(q.SelectedAnswer));
+
+    private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
+
+    private void SelectOption(string option)
+    {
+        SelectedOption = option;
+        CurrentQuestion.SelectedAnswer = option;
+    }
+
+    private void PreviousQuestion()
+    {
+        if (!IsFirstQuestion)
+        {
+            CurrentQuestionIndex--;
+            SelectedOption = CurrentQuestion.SelectedAnswer;
+        }
+    }
+
+    private void NextQuestion()
+    {
+        if (!IsLastQuestion)
+        {
+            CurrentQuestionIndex++;
+            SelectedOption = CurrentQuestion.SelectedAnswer;
+        }
+    }
+
+    private void SubmitExam()
+    {
+        // Submit exam logic
+    }
+
+    public class QuestionModel
+    {
+        public string QuestionText { get; set; }
+        public List<string> Options { get; set; }
+        public string CorrectAnswer { get; set; }
+        public string SelectedAnswer { get; set; }
+    }
+}
