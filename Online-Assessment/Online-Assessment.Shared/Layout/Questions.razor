@@ -1,0 +1,61 @@
+﻿@page "/questions"
+@inject QuestionService QuestionService
+
+<h3>Assessment</h3>
+<p>Time Remaining: @timeRemaining minutes</p>
+@if (questions == null)
+{
+    <p>Loading questions...</p>
+}
+else
+{
+    <div style="max-height: 500px; overflow-y: auto;">
+        @foreach (var question in questions)
+        {
+            <div>
+                <p>@question.QuestionText</p>
+                @foreach (var option in question.Options)
+                {
+                    <input type="radio" name="@question.QuestionText" value="@option" /> @option <br />
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Question> questions;
+    private int timeRemaining = 10;
+    private Timer timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        questions = await QuestionService.GetQuestionsAsync();
+        StartTimer();
+    }
+
+    private void StartTimer()
+    {
+        timer = new Timer(Countdown, null, 60000, 60000);
+    }
+
+    private void Countdown(object state)
+    {
+        if (timeRemaining > 0)
+        {
+            timeRemaining--;
+            InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            timer.Dispose();
+            SubmitAssessment();
+        }
+    }
+
+    private void SubmitAssessment()
+    {
+        // Handle submission logic here
+        Console.WriteLine("Time up! Submitting assessment...");
+    }
+}
