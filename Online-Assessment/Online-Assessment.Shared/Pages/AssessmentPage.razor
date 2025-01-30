@@ -171,11 +171,10 @@
 
     private int totalSeconds = 30 * 60; // 30 minutes in seconds
 
-    // OnInitialized to trigger the timer when component is loaded
     protected override async Task OnInitializedAsync()
     {
-        // Call the JavaScript function to start the timer with the total time in seconds
-        await JSRuntime.InvokeVoidAsync("startTimer", totalSeconds, 1000); // 1000 ms interval (1 second)
+        // Ensure the JavaScript is included in the HTML and use IJSRuntime to call startTimer
+        await JSRuntime.InvokeVoidAsync("startTimer", totalSeconds, await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "timer"));
     }
 
     private void SubmitExam()
