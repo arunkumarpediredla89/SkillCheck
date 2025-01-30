@@ -1,0 +1,45 @@
+﻿@page "/AdminPage"
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@using System.Collections.Generic
+ 
+<PageTitle>Admin Dashboard</PageTitle>
+
+<div class="dashboard-container">
+   
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="user-inputs">
+            <h3 class="text-center mb-4">Admin</h3>
+            <label>User Type:</label>
+            <select id="userType">
+                <option value="internal">Internal</option>
+                <option value="candidate">Candidate</option>
+            </select>
+            
+            <label>Username:</label>
+            <input type="text" id="username" placeholder="Enter username" />
+            
+            <label>Select Technology:</label>
+            <select id="technology">
+                <option value="maui">.NET MAUI</option>
+                <option value="react-native">React Native</option>
+            </select>
+            
+            <label>Difficulty Level:</label>
+            <select id="difficulty">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            
+            <label>Time Limit:</label>
+            <input type="text" value="30 min" readonly />
+            
+            <div class="button-container">
+                <button onclick="saveAndNavigate()">Save</button>
+            </div>
+        </section>
+    </div>
+</div>
