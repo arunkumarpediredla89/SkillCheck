@@ -174,7 +174,7 @@
     protected override async Task OnInitializedAsync()
     {
         // Ensure the JavaScript is included in the HTML and use IJSRuntime to call startTimer
-        await JSRuntime.InvokeVoidAsync("startTimer", totalSeconds, await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "timer"));
+        //await JSRuntime.InvokeVoidAsync("startTimer", totalSeconds, await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "timer"));
     }
 
     private void SubmitExam()
