@@ -3,13 +3,15 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @using System.Collections.Generic
+@inject IJSRuntime JSRuntime
+
 
 <PageTitle>React Native Assessment</PageTitle>
 
 <!-- Exam Header -->
 <div class="exam-header">
     <h1 class="exam-title">React Native Assessment</h1>
-    <span class="time-left"><strong>Time Left:</strong> @TimeRemaining</span>
+    <span class="time-left"><strong>Time Left : </strong> <span id="timer">30:00</span></span>
 </div>
 
 <!-- Question Section -->
@@ -61,11 +63,14 @@
         font-weight: bold;
     }
 
+
     .time-left {
-        font-size: 14px;
-        background: #f1f1f1;
-        padding: 5px 10px;
+        font-size: 18px;
+        background: #e0f7fa;
+        padding: 8px 15px;
         border-radius: 5px;
+        position: absolute;
+        right: 20px;
     }
 
     .question-container {
@@ -122,6 +127,7 @@
         padding: 8px 12px;
         font-size: 14px;
         border-radius: 5px;
+        width: 150px; /* Set width of the button to 200px */
     }
 </style>
 
@@ -163,6 +169,15 @@
         }
     }
 
+    private int totalSeconds = 30 * 60; // 30 minutes in seconds
+
+    // OnInitialized to trigger the timer when component is loaded
+    protected override async Task OnInitializedAsync()
+    {
+        // Call the JavaScript function to start the timer with the total time in seconds
+        await JSRuntime.InvokeVoidAsync("startTimer", totalSeconds, 1000); // 1000 ms interval (1 second)
+    }
+
     private void SubmitExam()
     {
         // Exam submission logic
@@ -176,4 +191,5 @@
         public string SelectedAnswer { get; set; }
     }
 }
+
 

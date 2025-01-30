@@ -24,35 +24,6 @@ h1:focus {
     outline: none;
 }
 
-.exam-header {
-    display: flex;
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    height: 100vh; /* Takes full height of the viewport */
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    flex-direction: column; /* Stack the elements vertically */
-    text-align: center; /* Ensures text inside header is centered */
-}
-
-.exam-title {
-    color: #0070AD;
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 15px; /* Adds space between the title and the time left */
-}
-
-.time-left {
-    font-size: 18px;
-    background: #e0f7fa;
-    padding: 8px 15px;
-    border-radius: 5px;
-}
-
-
-
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -112,10 +83,6 @@ h1:focus {
     justify-content: flex-start; /* Center horizontally */
     align-items: center; /* Center vertically */
     height: 10vh; /* Optional: Makes sure the div takes up the full viewport height */
-}
-
-.assessment-header {
-    text-align: end; /* Center the text inside the label */
 }
 
 .horizontal-stack-layout {
