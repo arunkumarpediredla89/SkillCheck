@@ -85,10 +85,6 @@ h1:focus {
     height: 10vh; /* Optional: Makes sure the div takes up the full viewport height */
 }
 
-.assessment-header {
-    text-align: end; /* Center the text inside the label */
-}
-
 .horizontal-stack-layout {
     display: flex;
     justify-content: center;

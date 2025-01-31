@@ -1,31 +1,36 @@
 ﻿@page "/assessmentPage"
+
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @using System.Collections.Generic
+@inject IJSRuntime JSRuntime
 
-<PageTitle>ReactNative Exam</PageTitle>
+
+<PageTitle>React Native Assessment</PageTitle>
 
 <!-- Exam Header -->
 <div class="exam-header">
-    <h1 class="exam-title">ReactNative Exam</h1>
-    <span class="time-left"><strong>Time Left:</strong> @TimeRemaining</span>
+    <h1 class="exam-title">React Native Assessment</h1>
+    <span class="time-left"><strong>Time Left : </strong> <span id="timer">30:00</span></span>
 </div>
 
 <!-- Question Section -->
-<h3 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h3>
-<p class="question-text">@CurrentQuestion.QuestionText</p>
+<div class="question-container">
+    <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
+    <p class="question-text">@CurrentQuestion.QuestionText</p>
 
-<!-- Options -->
-<div class="options">
-    @foreach (var option in CurrentQuestion.Options)
-    {
-        <label class="option-label">
-            <input type="radio" name="option" value="@option"
-                   checked="@(SelectedOption == option)"
-                   @onchange="(() => SelectOption(option))" />
-            @option
-        </label>
-    }
+    <!-- Options -->
+    <div class="options">
+        @foreach (var option in CurrentQuestion.Options)
+        {
+            <label class="option-label">
+                <input type="radio" name="option" value="@option"
+                       checked="@(SelectedOption == option)"
+                       @onchange="(() => SelectOption(option))" />
+                @option
+            </label>
+        }
+    </div>
 </div>
 
 <!-- Navigation Buttons -->
@@ -46,46 +51,71 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
+        text-align: center;
+        width: 100%;
     }
 
     .exam-title {
+        flex-grow: 1;
+        text-align: center;
         color: #0070AD;
         font-size: 24px;
         font-weight: bold;
     }
 
+
     .time-left {
-        font-size: 14px;
-        background: #f1f1f1;
-        padding: 5px 10px;
+        font-size: 18px;
+        background: #e0f7fa;
+        padding: 8px 15px;
         border-radius: 5px;
+        position: absolute;
+        right: 20px;
+    }
+
+    .question-container {
+        margin-left: 40px; /* Move question & options slightly to the right */
     }
 
     .question-number {
         font-size: 18px;
         font-weight: bold;
+        margin-top: 30px;
+        margin-bottom: 30px;
     }
 
     .question-text {
         font-size: 16px;
-        margin-bottom: 15px;
+        margin-top: 30px;
+        margin-bottom: 30px;
     }
 
     .options {
         display: flex;
         flex-direction: column;
+        gap: 10px;
     }
 
     .option-label {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 8px;
-        border-radius: 5px;
-        background: #f9f9f9;
+        padding: 10px 15px;
         margin: 5px 0;
+        background: #d6eaf8; /* Light Blue Background */
+        border-radius: 5px;
         cursor: pointer;
+        width: fit-content; /* Ensures the background only covers the option's text width */
+        transition: background-color 0.3s ease;
     }
+
+    input[type="radio"] {
+        margin-right: 10px; /* Space between radio button and label */
+    }
+
+        .option-label:hover {
+            background: #aed6f1; /* Darker Blue on Hover */
+        }
 
     .navigation {
         display: flex;
@@ -97,6 +127,7 @@
         padding: 8px 12px;
         font-size: 14px;
         border-radius: 5px;
+        width: 150px; /* Set width of the button to 200px */
     }
 </style>
 
@@ -138,6 +169,14 @@
         }
     }
 
+    private int totalSeconds = 30 * 60; // 30 minutes in seconds
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Ensure the JavaScript is included in the HTML and use IJSRuntime to call startTimer
+        await JSRuntime.InvokeVoidAsync("startTimer", totalSeconds, await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "timer"));
+    }
+
     private void SubmitExam()
     {
         // Exam submission logic
@@ -151,4 +190,5 @@
         public string SelectedAnswer { get; set; }
     }
 }
+
 

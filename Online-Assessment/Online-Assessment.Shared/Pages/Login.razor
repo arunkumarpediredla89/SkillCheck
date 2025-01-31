@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/"
 
 @using Online_Assessment.Shared.Pages
 @using Microsoft.AspNetCore.Components
@@ -19,7 +19,7 @@
                 <div class="vertical-stack-layout text-center" style="margin-top: 50px; margin-bottom: 0px">
 
                     <div class="text-center">
-                        <select class="form-select custom-dropdown" aria-label="Candidate options" @onchange="HandleSelectionChange" style="background-color: #17ABDA; color: white; margin-top: -20px;">
+                        <select class="form-select custom-dropdown" aria-label="Candidate options" @onchange="HandleSelectionChange" style="background-color: #17ABDA; color: white; margin-top: -20px; width: 150px;">
                             <option value="candidate" style="background-color: #ffffff; color: black;">Candidate</option>
                             <option value="internal" style="background-color: #ffffff; color: black;">Internal Users</option>
                             <option value="admin" style="background-color: #ffffff; color: black;">Admin</option>
@@ -99,7 +99,7 @@
         if (isValid)
         {
             // If valid, navigate to "counter" page
-            Navigation.NavigateTo("https://www.google.com/");
+            Navigation.NavigateTo("/assessmentPage");
         }
         else
         {
