@@ -5,45 +5,55 @@
 @using System.Collections.Generic
 @inject IJSRuntime JSRuntime
 
-
 <PageTitle>React Native Assessment</PageTitle>
 
-<!-- Exam Header -->
-<div class="exam-header">
-    <h1 class="exam-title">React Native Assessment</h1>
-    <span class="time-left"><strong>Time Left : </strong> <span id="timer">30:00</span></span>
-</div>
+@if (!IsAssessmentCompleted)
+{
+    <!-- Exam Header (Hidden when assessment is completed) -->
+    <div class="exam-header">
+        <h1 class="exam-title">React Native Assessment</h1>
+        <span class="time-left"><strong>Time Left : </strong> <span id="timer">30:00</span></span>
+    </div>
 
-<!-- Question Section -->
-<div class="question-container">
-    <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
-    <p class="question-text">@CurrentQuestion.QuestionText</p>
+    <!-- Question Section -->
+    <div class="question-container">
+        <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
+        <p class="question-text">@CurrentQuestion.QuestionText</p>
 
-    <!-- Options -->
-    <div class="options">
-        @foreach (var option in CurrentQuestion.Options)
+        <!-- Options -->
+        <div class="options">
+            @foreach (var option in CurrentQuestion.Options)
+            {
+                <label class="option-label">
+                    <input type="radio" name="option" value="@option"
+                           checked="@(SelectedOption == option)"
+                           @onchange="(() => SelectOption(option))" />
+                    @option
+                </label>
+            }
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation">
+        @if (!IsLastQuestion)
         {
-            <label class="option-label">
-                <input type="radio" name="option" value="@option"
-                       checked="@(SelectedOption == option)"
-                       @onchange="(() => SelectOption(option))" />
-                @option
-            </label>
+            <button @onclick="NextQuestion" class="btn btn-primary">Next</button>
+        }
+        else
+        {
+            <button @onclick="SubmitExam" class="btn btn-success">Submit</button>
         }
     </div>
-</div>
-
-<!-- Navigation Buttons -->
-<div class="navigation">
-    @if (!IsLastQuestion)
-    {
-        <button @onclick="NextQuestion" class="btn btn-primary">Next</button>
-    }
-    else
-    {
-        <button @onclick="SubmitExam" class="btn btn-success">Submit</button>
-    }
-</div>
+}
+else
+{
+    <!-- Completion Message -->
+    <div class="completion-message">
+        <h2>You have completed the assessment.</h2>
+        <p>Thank you for your participation!</p>
+    </div>
+}
 
 <style>
     .exam-header {
@@ -63,7 +73,6 @@
         font-weight: bold;
     }
 
-
     .time-left {
         font-size: 18px;
         background: #e0f7fa;
@@ -74,7 +83,7 @@
     }
 
     .question-container {
-        margin-left: 40px; /* Move question & options slightly to the right */
+        margin-left: 40px;
     }
 
     .question-number {
@@ -102,20 +111,20 @@
         gap: 10px;
         padding: 10px 15px;
         margin: 5px 0;
-        background: #d6eaf8; /* Light Blue Background */
+        background: #d6eaf8;
         border-radius: 5px;
         cursor: pointer;
-        width: fit-content; /* Ensures the background only covers the option's text width */
+        width: fit-content;
         transition: background-color 0.3s ease;
     }
 
     input[type="radio"] {
-        margin-right: 10px; /* Space between radio button and label */
+        margin-right: 10px;
     }
 
-        .option-label:hover {
-            background: #aed6f1; /* Darker Blue on Hover */
-        }
+    .option-label:hover {
+        background: #aed6f1;
+    }
 
     .navigation {
         display: flex;
@@ -127,12 +136,27 @@
         padding: 8px 12px;
         font-size: 14px;
         border-radius: 5px;
-        width: 150px; /* Set width of the button to 200px */
+        width: 150px;
+    }
+
+    .completion-message {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .completion-message h2 {
+        font-size: 22px;
+        color: #0070AD;
+    }
+
+    .completion-message p {
+        font-size: 18px;
+        color: #333;
     }
 </style>
 
 @code {
-    private string TimeRemaining = DateTime.Now.AddSeconds(20).ToString("HH:mm:ss");
+    private bool IsAssessmentCompleted = false;
     private List<QuestionModel> Questions = new()
     {
         new QuestionModel { QuestionText = "What is React Native?", Options = new List<string> { "A web framework", "A mobile app library", "A desktop tool", "A VCS" }, CorrectAnswer = "A mobile app library" },
@@ -151,7 +175,6 @@
     private string SelectedOption = "";
 
     private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
-
     private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
 
     private void SelectOption(string option)
@@ -173,13 +196,15 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         // Ensure the JavaScript is included in the HTML and use IJSRuntime to call startTimer
         //await JSRuntime.InvokeVoidAsync("startTimer", totalSeconds, await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "timer"));
+
     }
 
     private void SubmitExam()
     {
-        // Exam submission logic
+        IsAssessmentCompleted = true;
     }
 
     public class QuestionModel
@@ -190,5 +215,3 @@
         public string SelectedAnswer { get; set; }
     }
 }
-
-

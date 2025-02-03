@@ -1,0 +1,59 @@
+﻿@page "/AdminPage"
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@using System.Collections.Generic
+ 
+<PageTitle>📊 <span class="page-title" style="color: #12ABDB;">Admin Dashboard</span></PageTitle>
+ 
+<div class="dashboard-container">
+   
+    <!-- Main Content -->
+    <div class="main-content">
+     
+       
+        <section class="user-inputs">
+            <h3 class="section-title">Admin</h3>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <label>User Type:</label>
+                    <select id="userType">
+                        <option value="internal">Internal</option>
+                        <option value="candidate">Candidate</option>
+                    </select>
+                </div>
+                <div class="grid-item">
+                    <label>Username:</label>
+                    <input type="text" id="username" placeholder="Enter username" />
+                </div>
+                <div class="grid-item">
+                    <label>Select Technology:</label>
+                    <select id="technology">
+                        <option value="maui">.NET MAUI</option>
+                        <option value="react-native">React Native</option>
+                        <option value="react-native">Ionic</option>
+                        <option value="react-native">Angular</option>
+                        <option value="react-native">Html</option>
+                         <option value="react-native">CSS</option>
+                          <option value="react-native">TypeScript</option>
+                    </select>
+                </div>
+                <div class="grid-item">
+                    <label>Difficulty Level:</label>
+                    <select id="difficulty">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="grid-item full-width">
+                    <label>Time Limit:</label>
+                    <input type="text" value="30 min" readonly />
+                </div>
+                <div class="grid-item full-width button-container">
+                    <button onclick="saveAndNavigate()">Save</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+ 
