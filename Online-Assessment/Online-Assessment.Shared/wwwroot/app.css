@@ -170,5 +170,105 @@ button {
     justify-content: center;
     margin-top: 15px;
 }
+
+.page-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    display: block;
+    margin-bottom: 20px;
+}
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+}
+.sidebar {
+    width: 250px;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+}
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    background: #f4f4f4;
+}
+.top-navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: #ecf0f1;
+    border-radius: 5px;
+}
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #0070ad;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.user-inputs {
+    margin-top: 20px;
+    text-align: center;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.15);
+    max-width: 800px;
+    margin: auto;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.full-width {
+    grid-column: span 2;
+}
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+select, input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+button {
+    background: #3498db;
+    color: white;
+    padding: 14px 24px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 18px;
+}
+button:hover {
+    background: #2980b9;
+}
+ 
  
 
