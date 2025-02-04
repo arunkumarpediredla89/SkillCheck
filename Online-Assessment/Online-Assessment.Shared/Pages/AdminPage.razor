@@ -1,4 +1,4 @@
-﻿@page "/AdminPage"
+@page "/AdminPage"
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @using System.Collections.Generic
@@ -6,13 +6,10 @@
 <PageTitle>📊 <span class="page-title" style="color: #12ABDB;">Admin Dashboard</span></PageTitle>
  
 <div class="dashboard-container">
-   
     <!-- Main Content -->
     <div class="main-content">
-     
-       
         <section class="user-inputs">
-            <h3 class="section-title">Admin</h3>
+            <h3 class="section-title">HR Admin</h3>
             <div class="grid-container">
                 <div class="grid-item">
                     <label>User Type:</label>
@@ -26,16 +23,12 @@
                     <input type="text" id="username" placeholder="Enter username" />
                 </div>
                 <div class="grid-item">
-                    <label>Select Technology:</label>
-                    <select id="technology">
-                        <option value="maui">.NET MAUI</option>
-                        <option value="react-native">React Native</option>
-                        <option value="react-native">Ionic</option>
-                        <option value="react-native">Angular</option>
-                        <option value="react-native">Html</option>
-                         <option value="react-native">CSS</option>
-                          <option value="react-native">TypeScript</option>
-                    </select>
+                    <label>Password:</label>
+                    <input type="password" id="password" placeholder="Enter password" />
+                </div>
+                <div class="grid-item">
+                    <label>Confirm Password:</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm password" />
                 </div>
                 <div class="grid-item">
                     <label>Difficulty Level:</label>
@@ -45,9 +38,22 @@
                         <option value="high">High</option>
                     </select>
                 </div>
-                <div class="grid-item full-width">
+                <div class="grid-item">
                     <label>Time Limit:</label>
                     <input type="text" value="30 min" readonly />
+                </div>
+                <div class="grid-item">
+                    <label>Select Technology:</label>
+                    <select id="technology" onchange="updateSubTechnology()">
+                        <option value="maui">.NET MAUI</option>
+                        <option value="blazor">Blazor Framework</option>
+                        <option value="web">Web Development</option>
+                    </select>
+                </div>
+                <div class="grid-item">
+                    <label>Select Sub-Technology:</label>
+                    <select multiple id="subTechnology">
+                    </select>
                 </div>
                 <div class="grid-item full-width button-container">
                     <button onclick="saveAndNavigate()">Save</button>
@@ -56,4 +62,60 @@
         </section>
     </div>
 </div>
- 
+
+<script>
+function saveAndNavigate() {
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    let confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (!username) {
+        alert("Please enter a username.");
+        return;
+    }
+
+    if (!password) {
+        alert("Please enter a password.");
+        return;
+    }
+
+    if (!validatePassword(password)) {
+        alert("Password must contain at least 8 characters, including uppercase, lowercase, numeric, and special characters.");
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
+
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password);
+    window.location.href = "/nextpage";
+}
+
+function validatePassword(password) {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
+}
+
+function updateSubTechnology() {
+    const subTechDropdown = document.getElementById("subTechnology");
+    subTechDropdown.innerHTML = ""; // Clear existing options
+    
+    const techMap = {
+        "maui": ["HTML", "C#", "SQL"],
+        "blazor": ["Razor", "C#"],
+        "web": ["HTML", "CSS", "JavaScript"]
+    };
+    
+    const selectedTech = document.getElementById("technology").value;
+    
+    techMap[selectedTech].forEach(subTech => {
+        let option = document.createElement("option");
+        option.value = subTech.toLowerCase();
+        option.textContent = subTech;
+        subTechDropdown.appendChild(option);
+    });
+}
+</script>
