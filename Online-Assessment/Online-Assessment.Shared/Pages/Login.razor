@@ -102,13 +102,13 @@
         //if (username == correctUsername && password == correctPassword)
         if (isValidCandidate || isValidInternalUser)
         {
-            // If valid, navigate to "assessmentPage" page
+            // If valid, navigate to "AssessmentPage" page
             Navigation.NavigateTo("/assessmentPage");
         }
         else if (isAdmin)
         {
-            // If valid, navigate to "counter" page
-            Navigation.NavigateTo("/counter");
+            // If valid, navigate to "Admin" page
+            Navigation.NavigateTo("/adminPage");
         }
         else
         {
