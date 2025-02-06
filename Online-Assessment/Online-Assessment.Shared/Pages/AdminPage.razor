@@ -1,4 +1,4 @@
-@page "/AdminPage"
+@page "/adminPage"
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @using System.Collections.Generic
@@ -22,14 +22,7 @@
                     <label>Username:</label>
                     <input type="text" id="username" placeholder="Enter username" />
                 </div>
-                <div class="grid-item">
-                    <label>Password:</label>
-                    <input type="password" id="password" placeholder="Enter password" />
-                </div>
-                <div class="grid-item">
-                    <label>Confirm Password:</label>
-                    <input type="password" id="confirmPassword" placeholder="Confirm password" />
-                </div>
+               
                 <div class="grid-item">
                     <label>Difficulty Level:</label>
                     <select id="difficulty">
@@ -48,11 +41,6 @@
                         <option value="maui">.NET MAUI</option>
                         <option value="blazor">Blazor Framework</option>
                         <option value="web">Web Development</option>
-                    </select>
-                </div>
-                <div class="grid-item">
-                    <label>Select Sub-Technology:</label>
-                    <select multiple id="subTechnology">
                     </select>
                 </div>
                 <div class="grid-item full-width button-container">
@@ -95,7 +83,7 @@ function saveAndNavigate() {
 }
 
 function validatePassword(password) {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const regex = "";
     return regex.test(password);
 }
 
