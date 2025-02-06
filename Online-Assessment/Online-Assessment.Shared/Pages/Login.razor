@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 
 @using Online_Assessment.Shared.Pages
 @using Microsoft.AspNetCore.Components
@@ -74,8 +74,8 @@
 
 @code {
 
-    private string username;
-    private string password;
+    private string username = string.Empty;
+    private string password = String.Empty;
 
     // Flag to show error message if login fails
     private bool loginFailed = false;
@@ -85,7 +85,7 @@
     private void HandleSelectionChange(ChangeEventArgs e)
     {
         loginFailed = false;
-        selectedOption = e.Value.ToString();
+        selectedOption = e.Value?.ToString() ?? string.Empty;
         Console.WriteLine($"Selected option: {selectedOption}");
     }
 
@@ -100,7 +100,7 @@
         bool isAdmin = selectedOption == "admin" && username == "Admin" && password == "admin" ? true : false;
         // Check if entered username and password match the predefined values
         //if (username == correctUsername && password == correctPassword)
-        if (isValidCandidate || isValidInternalUser)
+        if (isValidCandidate)
         {
             // If valid, navigate to "AssessmentPage" page
             Navigation.NavigateTo("/assessmentPage");
@@ -109,6 +109,11 @@
         {
             // If valid, navigate to "Admin" page
             Navigation.NavigateTo("/adminPage");
+        }
+        else if(isValidInternalUser)
+        {
+            // If valid, navigate to "COE Leads" page
+            Navigation.NavigateTo("/coeLeads");
         }
         else
         {
