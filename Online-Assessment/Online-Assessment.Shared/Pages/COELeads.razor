@@ -5,7 +5,7 @@
 
 
 <div class="selection-container">
-    <h3 class="section-title">Admin Question Setup Screen</h3>
+     <h3 class="section-title" style="text-align: center; color: #007BFF;">Admin Question Setup Screen</h3>
     
     <div class="grid-container">
 
@@ -158,8 +158,9 @@ function updateQuestionDistribution(selectedSubTechs) {
         input.type = "number";
         input.min = "1";
         input.max = "100";
-        input.placeholder = "No of Questions    ";
+        input.placeholder = "No of Questions";
         input.className = "distribution-input";
+        input.style.width = "100%"; // Expand input to full width
 
         row.appendChild(label);
         row.appendChild(input);
