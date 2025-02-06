@@ -2,20 +2,23 @@
 
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
-@using System.Collections.Generic
 @inject IJSRuntime JSRuntime
+@using System.Timers
 
 <PageTitle>React Native Assessment</PageTitle>
 
+<!-- Exam Header -->
 @if (!IsAssessmentCompleted)
 {
-    <!-- Exam Header (Hidden when assessment is completed) -->
     <div class="exam-header">
         <h1 class="exam-title">React Native Assessment</h1>
-        <span class="time-left"><strong>Time Left : </strong> <span id="timer">30:00</span></span>
+        <span class="time-left"><strong>Time Left: </strong> <span id="timer">@($"{TimeRemaining}s")</span></span>
     </div>
+}
 
-    <!-- Question Section -->
+<!-- Question Section -->
+@if (!IsAssessmentCompleted)
+{
     <div class="question-container">
         <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
         <p class="question-text">@CurrentQuestion.QuestionText</p>
@@ -118,10 +121,6 @@ else
         transition: background-color 0.3s ease;
     }
 
-    input[type="radio"] {
-        margin-right: 10px;
-    }
-
     .option-label:hover {
         background: #aed6f1;
     }
@@ -138,25 +137,12 @@ else
         border-radius: 5px;
         width: 150px;
     }
-
-    .completion-message {
-        text-align: center;
-        margin-top: 50px;
-    }
-
-    .completion-message h2 {
-        font-size: 22px;
-        color: #0070AD;
-    }
-
-    .completion-message p {
-        font-size: 18px;
-        color: #333;
-    }
 </style>
 
 @code {
     private bool IsAssessmentCompleted = false;
+    private int TimeRemaining = 30; // 30 seconds per question
+    private Timer questionTimer;
     private List<QuestionModel> Questions = new()
     {
         new QuestionModel { QuestionText = "What is React Native?", Options = new List<string> { "A web framework", "A mobile app library", "A desktop tool", "A VCS" }, CorrectAnswer = "A mobile app library" },
@@ -168,7 +154,7 @@ else
         new QuestionModel { QuestionText = "Command to run a React Native app on Android?", Options = new List<string> { "react-native run-android", "react-native run-ios", "npm start", "npx react-native run-android" }, CorrectAnswer = "npx react-native run-android" },
         new QuestionModel { QuestionText = "Command to run React Native app in dev mode?", Options = new List<string> { "react-native run-android", "react-native run-ios", "npm start", "npx react-native run-ios" }, CorrectAnswer = "react-native run-android" },
         new QuestionModel { QuestionText = "Command to create a new React Native project?", Options = new List<string> { "react-native init", "npx create-react-native-app", "npm init react-native", "npx react-native init" }, CorrectAnswer = "npx react-native init" },
-        new QuestionModel { QuestionText = "Command to install React Native CLI globally?", Options = new List<string> { "npm install -g react-native-cli", "npm install -g create-react-native-app", "npm install -g react-native", "npm install -g npx" }, CorrectAnswer = "npm install -g react-native-cli" }
+        new QuestionModel { QuestionText = "Command to install React Native CLI globally?", Options = new List<string> { "npm install -g react-native-cli", "npm install -g create-react-native-app", "npm install -g react-native", "npm install -g npx" }, CorrectAnswer = "npm install -g react-native-cli" }    
     };
 
     private int CurrentQuestionIndex = 0;
@@ -177,33 +163,72 @@ else
     private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
     private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
 
-    private void SelectOption(string option)
+    protected override async Task OnInitializedAsync()
     {
-        SelectedOption = option;
-        CurrentQuestion.SelectedAnswer = option;
+        StartTimer();
+        await JSRuntime.InvokeVoidAsync("eval", DisableBackAndRefreshJS);
     }
 
-    private void NextQuestion()
+    private void StartTimer()
     {
-        if (!IsLastQuestion)
+        if (questionTimer != null)
         {
-            CurrentQuestionIndex++;
-            SelectedOption = CurrentQuestion.SelectedAnswer;
+            questionTimer.Dispose();
+        }
+
+        TimeRemaining = 30;
+        questionTimer = new Timer(1000);
+        questionTimer.Elapsed += TimerElapsed;
+        questionTimer.Start();
+    }
+
+    private async void TimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        if (TimeRemaining > 0)
+        {
+            TimeRemaining--;
+            await InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            await InvokeAsync(() =>
+            {
+                NextQuestion();
+                StartTimer();
+            });
         }
     }
 
-    private int totalSeconds = 30 * 60; // 30 minutes in seconds
-
-    protected override async Task OnInitializedAsync()
+private void SelectOption(string option)
+{
+    SelectedOption = option;
+    Questions[CurrentQuestionIndex].SelectedAnswer = option;
+    StateHasChanged(); // Ensure UI reflects the change
+}
+private void NextQuestion()
+{
+    if (!IsLastQuestion)
     {
-        // Ensure the JavaScript is included in the HTML and use IJSRuntime to call startTimer
-        //await JSRuntime.InvokeVoidAsync("startTimer", totalSeconds, await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "timer"));
+        CurrentQuestionIndex++; // Move to next question
+        SelectedOption = ""; // Reset selection
+        StateHasChanged(); // Force UI update
+        StartTimer();
     }
-
-    private void SubmitExam()
+    else
     {
+        SubmitExam();
+    }
+}
+
+
+    private async void SubmitExam()
+    {
+        questionTimer?.Dispose();
         IsAssessmentCompleted = true;
+        await JSRuntime.InvokeVoidAsync("eval", EnableNavigationJS);
     }
+
+
 
     public class QuestionModel
     {
@@ -212,4 +237,20 @@ else
         public string CorrectAnswer { get; set; }
         public string SelectedAnswer { get; set; }
     }
+
+    private string DisableBackAndRefreshJS = @"
+        history.pushState(null, '', location.href);
+        window.onpopstate = function () {
+            history.pushState(null, '', location.href);
+            alert('Back button is disabled during the assessment.');
+        };
+        window.onbeforeunload = function (event) {
+            event.preventDefault();
+            return 'Are you sure you want to leave? Your progress will be lost.';
+        };
+    ";
+
+    private string EnableNavigationJS = @"
+        window.onbeforeunload = null;
+    ";
 }
