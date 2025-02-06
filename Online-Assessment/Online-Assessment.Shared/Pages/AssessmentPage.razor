@@ -137,11 +137,20 @@ else
         border-radius: 5px;
         width: 150px;
     }
+
+    .completion-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        height: 100vh;
+    }
 </style>
 
 @code {
     private bool IsAssessmentCompleted = false;
-    private int TimeRemaining = 30; // 30 seconds per question
+    private int TimeRemaining = 20; // 20 seconds per question
     private Timer questionTimer;
     private List<QuestionModel> Questions = new()
     {
@@ -163,6 +172,16 @@ else
     private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
     private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
 
+    private string DisableBackAndRefreshJS = @"
+        window.onbeforeunload = function() {
+            return 'Are you sure you want to leave? Your progress will be lost.';
+        };
+        history.pushState(null, '', location.href);
+        window.onpopstate = function() {
+            history.pushState(null, '', location.href);
+        };
+    ";
+
     protected override async Task OnInitializedAsync()
     {
         StartTimer();
@@ -171,12 +190,8 @@ else
 
     private void StartTimer()
     {
-        if (questionTimer != null)
-        {
-            questionTimer.Dispose();
-        }
-
-        TimeRemaining = 30;
+        questionTimer?.Dispose();
+        TimeRemaining = 20;
         questionTimer = new Timer(1000);
         questionTimer.Elapsed += TimerElapsed;
         questionTimer.Start();
@@ -199,36 +214,38 @@ else
         }
     }
 
-private void SelectOption(string option)
-{
-    SelectedOption = option;
-    Questions[CurrentQuestionIndex].SelectedAnswer = option;
-    StateHasChanged(); // Ensure UI reflects the change
-}
-private void NextQuestion()
-{
-    if (!IsLastQuestion)
+    private void SelectOption(string option)
     {
-        CurrentQuestionIndex++; // Move to next question
-        SelectedOption = ""; // Reset selection
-        StateHasChanged(); // Force UI update
-        StartTimer();
+        SelectedOption = option;
+        Questions[CurrentQuestionIndex].SelectedAnswer = option;
+        StateHasChanged();
     }
-    else
-    {
-        SubmitExam();
-    }
-}
 
+    private void NextQuestion()
+    {
+        if (!IsLastQuestion)
+        {
+            CurrentQuestionIndex++;
+            SelectedOption = "";
+            StateHasChanged();
+            StartTimer();
+        }
+        else
+        {
+            SubmitExam();
+        }
+    }
 
     private async void SubmitExam()
     {
         questionTimer?.Dispose();
         IsAssessmentCompleted = true;
+        var EnableNavigationJS = @"
+            window.onbeforeunload = null;
+            window.onpopstate = null;
+        ";
         await JSRuntime.InvokeVoidAsync("eval", EnableNavigationJS);
     }
-
-
 
     public class QuestionModel
     {
@@ -237,20 +254,4 @@ private void NextQuestion()
         public string CorrectAnswer { get; set; }
         public string SelectedAnswer { get; set; }
     }
-
-    private string DisableBackAndRefreshJS = @"
-        history.pushState(null, '', location.href);
-        window.onpopstate = function () {
-            history.pushState(null, '', location.href);
-            alert('Back button is disabled during the assessment.');
-        };
-        window.onbeforeunload = function (event) {
-            event.preventDefault();
-            return 'Are you sure you want to leave? Your progress will be lost.';
-        };
-    ";
-
-    private string EnableNavigationJS = @"
-        window.onbeforeunload = null;
-    ";
 }
