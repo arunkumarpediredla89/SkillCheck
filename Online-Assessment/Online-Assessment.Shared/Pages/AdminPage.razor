@@ -3,23 +3,28 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @using System.Collections.Generic
- 
+
 <div class="container">
     <div class="selection-container">
         <h3 class="section-title">HR Admin</h3>
         <div class="grid-container">
             <div class="grid-item">
                 <label>User Type:</label>
-                <select id="userType">
+                <select id="userType" onchange="updateSubUserType()">
                     <option value="internal">Internal</option>
                     <option value="candidate">Candidate</option>
                 </select>
             </div>
             <div class="grid-item">
-                <label>Username:</label>
-                <input type="text" id="username" placeholder="Enter username" />
+                <label>Sub User Type:</label>
+                <select id="subUserType">
+                    <!-- Options will be populated based on user type selection -->
+                </select>
             </div>
-            
+            <div class="grid-item">
+                <label>User EmailID:</label>
+                <input type="text" id="username" placeholder="Enter User EmailID" />
+            </div>
             <div class="grid-item">
                 <label>Difficulty Level:</label>
                 <select id="difficulty">
@@ -39,6 +44,10 @@
                     <option value="blazor">Blazor Framework</option>
                     <option value="web">Web Development</option>
                 </select>
+            </div>
+            <div class="grid-item">
+                <label>No of Experience:</label>
+                <input type="text" id="experience" placeholder="Enter years of experience" />
             </div>
             <div class="grid-item full-width button-container">
                 <button onclick="saveAndNavigate()">Save</button>
@@ -77,6 +86,25 @@ function updateSubTechnology() {
         option.value = subTech.toLowerCase();
         option.textContent = subTech;
         subTechDropdown.appendChild(option);
+    });
+}
+
+function updateSubUserType() {
+    const subUserTypeDropdown = document.getElementById("subUserType");
+    subUserTypeDropdown.innerHTML = ""; // Clear existing options
+    
+    const userTypeMap = {
+        "internal": ["YP", "Lateral", "Interviewer"],
+        "candidate": ["Experienced", "More Experienced", "Fresher"]
+    };
+    
+    const selectedUserType = document.getElementById("userType").value;
+    
+    userTypeMap[selectedUserType].forEach(subUserType => {
+        let option = document.createElement("option");
+        option.value = subUserType.toLowerCase();
+        option.textContent = subUserType;
+        subUserTypeDropdown.appendChild(option);
     });
 }
 </script>
