@@ -148,6 +148,18 @@ else
     }
 </style>
 
+<script>
+    window.registerBlurHandler = function (objRef) {
+        console.log("registerBlurHandler called");
+        window.addEventListener('blur', function () {
+            console.log("blur event detected");
+            objRef.invokeMethodAsync('MarkAssessmentAsCompleted')
+                .then(() => console.log("Method invoked"))
+                .catch(error => console.error("Error invoking method", error));
+        });
+    };
+</script>
+
 @code {
     private bool IsAssessmentCompleted = false;
     private int TimeRemaining = 20; // 20 seconds per question
@@ -181,12 +193,6 @@ else
             history.pushState(null, '', location.href);
         };
     ";
-
-    protected override async Task OnInitializedAsync()
-    {
-        StartTimer();
-        await JSRuntime.InvokeVoidAsync("eval", DisableBackAndRefreshJS);
-    }
 
     private void StartTimer()
     {
@@ -245,6 +251,30 @@ else
             window.onpopstate = null;
         ";
         await JSRuntime.InvokeVoidAsync("eval", EnableNavigationJS);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        StartTimer();
+        await JSRuntime.InvokeVoidAsync("eval", DisableBackAndRefreshJS);
+
+        var objRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("registerBlurHandler", objRef);
+        Console.WriteLine("JavaScript function registerBlurHandler called");
+    }
+
+    [JSInvokable]
+    public void MarkAssessmentAsCompleted()
+    {
+        try
+        {
+            IsAssessmentCompleted = true;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
     }
 
     public class QuestionModel
