@@ -12,17 +12,27 @@
         <!-- User Type -->
         <div class="grid-item">
             <label>User Type:</label>
-            <select id="userType">
-                <option value="" disabled selected>Select User Type</option>
-                <option value="admin">Internal</option>
-                <option value="user">External</option>
-            </select>
+            <div class="dropdown-container">
+            <div class="dropdown-header" onclick="toggleUserTypeDropdown()">
+                <span id="selectedUserTypePlaceholder">Select User Type</span>
+                <span class="dropdown-icon">&#9662;</span>
+            </div>
+            <div id="userTypeDropdown" class="dropdown-content">
+                <div class="checkbox-item">
+                <input type="checkbox" id="admin" value="admin" onchange="updateUserTypePlaceholder()">
+                <label for="admin">Internal</label>
+                </div>
+                <div class="checkbox-item">
+                <input type="checkbox" id="user" value="user" onchange="updateUserTypePlaceholder()">
+                <label for="user">External</label>
+                </div>
+            </div>
+            </div>
         </div>
 
         <!-- Username -->
         <div class="grid-item">
-            <label>Username:</label>
-            <input type="text" id="username" placeholder="Enter Username" />
+          
         </div>
 
         <!-- Technology Selection -->
@@ -60,7 +70,7 @@
 
         <div class="grid-item full-width">
             <label>Total Questions:</label>
-             <input type="number" id="totalQuestions" value="10" min="1" />
+             <input type="number" id="totalQuestions" value="0" min="1" />
         </div>
 
         <!-- Difficulty Level -->
@@ -76,8 +86,8 @@
 
         <!-- Time Limit -->
         <div class="grid-item">
-            <label for="timeLimit">Time Limit (seconds):</label>
-            <input type="number" id="timeLimit" value="20" min="1" max="300" />
+            <label for="timeLimit">Time Limit (Each Question 20 sec):</label>
+            <input type="number" id="timeLimit" value="0"/>
         </div>
 
         <!-- Submit Button -->
@@ -89,6 +99,20 @@
 </div>
 
 <script>
+function toggleUserTypeDropdown() {
+    let dropdown = document.getElementById("userTypeDropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+
+function updateUserTypePlaceholder() {
+    let selectedUserTypes = [];
+    document.querySelectorAll('#userTypeDropdown input[type=checkbox]:checked').forEach(checkbox => {
+        selectedUserTypes.push(checkbox.nextElementSibling.textContent);
+    });
+
+    let placeholder = document.getElementById("selectedUserTypePlaceholder");
+    placeholder.textContent = selectedUserTypes.length > 0 ? selectedUserTypes.join(", ") : "Select User Type ▼";
+}
 function updateSubTechnology() {
     const subTechContainer = document.getElementById("subTechnologyContainer");
     subTechContainer.innerHTML = ""; // Clear previous options
@@ -161,11 +185,13 @@ function updateQuestionDistribution(selectedSubTechs) {
         input.placeholder = "No of Questions";
         input.className = "distribution-input";
         input.style.width = "100%"; // Expand input to full width
+        input.addEventListener("change", updateTotalValues); // Add event listener
 
         row.appendChild(label);
         row.appendChild(input);
         distributionContainer.appendChild(row);
     });
+    updateTotalValues();
 }
 
 function submitTechnologySelection() {
@@ -192,6 +218,15 @@ function submitTechnologySelection() {
           "Question Distribution: " + JSON.stringify(questionDistribution, null, 2) + "\n" +
           "Difficulty Level: " + difficulty + "\n" +
           "Time Limit: " + timeLimit + " seconds");
+}
+
+function updateTotalValues() {
+    let total = 0;
+    document.querySelectorAll(".distribution-input").forEach(input => {
+        total += parseInt(input.value) || 0;
+    });
+    document.getElementById("totalQuestions").value = total;
+    document.getElementById("timeLimit").value = total * 20;
 }
 
 // Close dropdown when clicking outside
