@@ -32,6 +32,11 @@ namespace Online_Assessment.Shared.Services
             existingUser.DifficultyLevel = user.DifficultyLevel;
             existingUser.Technology = user.Technology;
             existingUser.Experience = user.Experience;
+            existingUser.SelectedSubTechnologies = user.SelectedSubTechnologies;
+            existingUser.Score = user.Score;
+            existingUser.OverallScore = user.OverallScore;
+            existingUser.Result = user.Result;
+            existingUser.Comments = user.Comments;
         }
     }
 
