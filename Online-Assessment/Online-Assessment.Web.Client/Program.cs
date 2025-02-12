@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Online_Assessment.Shared.Services;
 using Online_Assessment.Web.Client.Services;
+using Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
