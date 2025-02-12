@@ -1,4 +1,4 @@
-﻿@page "/adminListPage"
+@page "/adminListPage"
 @using Model
 @using Online_Assessment.Shared.Services
 @inject NavigationManager NavigationManager
@@ -14,11 +14,12 @@
                         <tr>
                             <th class="px-6 py-4 border border-gray-300">Email</th>
                             <th class="px-6 py-4 border border-gray-300">User Type</th>
-                            <th class="px-6 py-4 border border-gray-300">Sub User Type</th>
                             <th class="px-6 py-4 border border-gray-300">Technology</th>
-                            <th class="px-6 py-4 border border-gray-300">Experience</th>
-                            <th class="px-6 py-4 border border-gray-300">Difficulty</th>
-                            <th class="px-6 py-4 border border-gray-300">Time Limit</th>
+                            <th class="px-6 py-4 border border-gray-300">Sub Technology</th>
+                            <th class="px-6 py-4 border border-gray-300">Score</th>
+                            <th class="px-6 py-4 border border-gray-300">over All Score</th>
+                            <th class="px-6 py-4 border border-gray-300">Result</th>
+                            <th class="px-6 py-4 border border-gray-300">Comments</th>
                             <th class="px-6 py-4 border border-gray-300">Actions</th>
                         </tr>
                     </thead>
@@ -38,39 +39,30 @@
                                             </select>
                                         </td>
                                         <td class="px-6 py-4 border border-gray-300">
-                                            <select class="input-field" @bind="selectedUser.SubUserType">
-                                                <option value="YP">YP</option>
-                                                <option value="Lateral">Lateral</option>
-                                                <option value="Interviewer">Interviewer</option>
-                                                <option value="Experienced">Experienced</option>
-                                                <option value="More Experienced">More Experienced</option>
-                                                <option value="Fresher">Fresher</option>
-                                            </select>
-                                        </td>
-                                        <td class="px-6 py-4 border border-gray-300">
                                             <select class="input-field" @bind="selectedUser.Technology">
-                                                <option value=".NET MAUI">.NET MAUI</option>
+                                               <option value=".NET MAUI">.NET MAUI</option>
                                                 <option value="Blazor">Blazor</option>
                                                 <option value="Web Development">Web Development</option>
                                             </select>
                                         </td>
                                         <td class="px-6 py-4 border border-gray-300">
-                                            <select class="input-field" @bind="selectedUser.Experience">
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="5+">5+</option>
+                                            <select class="input-field" @bind="selectedUser.SelectedSubTechnologies">
+                                                <option value="HTML">HTML</option>
+                                                <option value="Csharp">C#</option>
+                                                <option value="SQL">SQL</option>
                                             </select>
                                         </td>
                                         <td class="px-6 py-4 border border-gray-300">
-                                            <select class="input-field" @bind="selectedUser.DifficultyLevel">
-                                                <option value="Low">Low</option>
-                                                <option value="Medium">Medium</option>
-                                                <option value="High">High</option>
-                                            </select>
+                                           <input type="text" class="input-field" @bind="selectedUser.Score" readonly />
                                         </td>
                                         <td class="px-6 py-4 border border-gray-300">
-                                            <input type="text" class="input-field" @bind="selectedUser.TimeLimit" readonly />
+                                           <input type="text" class="input-field" @bind="selectedUser.OverallScore" readonly />
+                                        </td>
+                                         <td class="px-6 py-4 border border-gray-300">
+                                           <input type="text" class="input-field" @bind="selectedUser.Result" readonly />
+                                        </td>
+                                         <td class="px-6 py-4 border border-gray-300">
+                                           <input type="text" class="input-field" @bind="selectedUser.Comments" readonly />
                                         </td>
                                         <td class="px-6 py-4 border border-gray-300 text-center">
                                             <div class="flex justify-center items-center space-x-2">
@@ -83,15 +75,17 @@
                                     {
                                         <td class="px-6 py-4 border border-gray-300">@user.Email</td>
                                         <td class="px-6 py-4 border border-gray-300">@user.UserType</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.SubUserType</td>
                                         <td class="px-6 py-4 border border-gray-300">@user.Technology</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.Experience</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.DifficultyLevel</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.TimeLimit</td>
+                                        <td class="px-6 py-4 border border-gray-300">@user.SelectedSubTechnologies</td>
+                                        <td class="px-6 py-4 border border-gray-300">@user.Score</td>
+                                        <td class="px-6 py-4 border border-gray-300">@user.OverallScore</td>
+                                        <td class="px-6 py-4 border border-gray-300">@user.Result</td>
+                                        <td class="px-6 py-4 border border-gray-300">@user.Comments</td>
                                         <td class="px-6 py-4 border border-gray-300 text-center">
                                             <div class="flex justify-center items-center space-x-2">
-                                                <button class="btn-edit" @onclick="() => EditUser(user)">✏ Edit</button>
-                                                <button class="btn-delete" @onclick="() => DeleteUser(user.Id)">🗑 Delete</button>
+                                                @* <button class="btn-edit" @onclick="() => EditUser(user)">✏ Edit</button>
+                                                <button class="btn-delete" @onclick="() => DeleteUser(user.Id)">🗑 Delete</button> *@
+                                                <button class="btn-view" @onclick="() => ViewUser()">🗑 View</button>
                                             </div>
                                         </td>
                                     }
@@ -130,11 +124,12 @@
             Id = user.Id,
             Email = user.Email,
             UserType = user.UserType,
-            SubUserType = user.SubUserType,
             Technology = user.Technology,
-            Experience = user.Experience,
-            DifficultyLevel = user.DifficultyLevel,
-            TimeLimit = user.TimeLimit
+            SelectedSubTechnologies = user.SelectedSubTechnologies,
+            Score = user.Score,
+            OverallScore = user.OverallScore,
+            Result = user.Result,
+            Comments = user.Comments
         };
         editingUserId = user.Id;
     }
@@ -156,6 +151,11 @@
         AdminService.DeleteUser(id);
         users = AdminService.GetUsers();
     }
+
+    private void ViewUser()
+    {
+        NavigationManager.NavigateTo("/adminPage");
+    }
 }
 
 
@@ -169,7 +169,7 @@
     table {
         margin: auto;
     }
-    .btn-edit, .btn-delete, .btn-save, .btn-cancel {
+    .btn-edit, .btn-delete, .btn-save, .btn-cancel,.btn-view {
         padding: 8px 12px;
         border-radius: 6px;
         transition: background 0.3s;
@@ -183,4 +183,6 @@
     .btn-save:hover { background-color: #16a34a; }
     .btn-cancel { background-color: #6b7280; }
     .btn-cancel:hover { background-color: #4b5563; }
+    .btn-view { background-color: #1751c5; }
+    .btn-view:hover { background-color: #1751c5; }
 </style>
