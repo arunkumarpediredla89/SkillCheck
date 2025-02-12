@@ -108,7 +108,8 @@
         else if (isAdmin)
         {
             // If valid, navigate to "Admin" page
-            Navigation.NavigateTo("/adminPage");
+            //Navigation.NavigateTo("/adminPage");
+        Navigation.NavigateTo("/adminListPage", forceLoad: true);
         }
         else if(isValidInternalUser)
         {
