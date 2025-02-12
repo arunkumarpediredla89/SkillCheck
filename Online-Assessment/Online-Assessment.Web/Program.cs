@@ -11,7 +11,7 @@ builder.Services.AddRazorComponents()
 
 // Add device-specific services used by the Online_Assessment.Shared project
 builder.Services.AddSingleton<IFormFactor, FormFactor>();
-
+builder.Services.AddSingleton<AdminService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
