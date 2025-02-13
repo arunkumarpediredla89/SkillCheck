@@ -64,6 +64,7 @@ else
     }
 }
 
+<!-- View Response Design Start-->
 @if(RenderAnswers)
 {
     <div class="question-container">
@@ -152,6 +153,7 @@ else
             <button @onclick="NextQuestionPreview" class="btn btn-primary">Next</button>
         }
     </div>
+<!-- View Response Design End-->
 }
 
 <style>
@@ -301,7 +303,7 @@ else
 
     private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
     private bool IsFistQuestion => CurrentQuestionIndex == 0;
-    private bool RenderAnswers = false;
+    private bool RenderAnswers = false; //view response variable
     private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
 
     private string DisableBackAndRefreshJS = @"
@@ -390,7 +392,7 @@ else
     }
 
 
-// code to view response 
+// code to view response start
     private void ViewResponse()
     {
         RenderAnswers = true;
@@ -405,4 +407,5 @@ else
     {
         CurrentQuestionIndex--;
     }
+// code to view response end
 }
