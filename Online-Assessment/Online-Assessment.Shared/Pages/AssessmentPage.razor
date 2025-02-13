@@ -20,9 +20,10 @@
 @if (!IsAssessmentCompleted)
 {
     <div class="question-container">
-        <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
-        <p class="question-text">@CurrentQuestion.QuestionText</p>
-
+        <div class="question-title">
+            <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
+            <p class="question-text">@CurrentQuestion.QuestionText</p>
+        </div>
         <!-- Options -->
         <div class="options">
             @foreach (var option in CurrentQuestion.Options)
@@ -51,11 +52,108 @@
 }
 else
 {
-    <!-- Completion Message -->
-    <div class="completion-message">
-        <h2>You have completed the assessment.</h2>
-        <p>Thank you for your participation!</p>
+    @if(!RenderAnswers)
+    {
+        <!-- Completion Message -->
+        <div class="completion-message">
+            <h2>You have completed the assessment.</h2>
+            <p>Thank you for your participation!</p>
+
+            <button @onclick="ViewResponse" class="btn btn-success">View Response</button>
+        </div>
+    }
+}
+
+<!-- View Response Design Start-->
+@if(RenderAnswers)
+{
+    <div class="question-container">
+        <div class="question-title">
+            <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
+            <p class="question-text">@CurrentQuestion.QuestionText</p>
+        </div>
+        <!-- Options -->
+        <div class="options">
+            @foreach (var option in CurrentQuestion.Options)
+            {
+                @if(CurrentQuestion.SelectedAnswer == option && CurrentQuestion.SelectedAnswer == CurrentQuestion.CorrectAnswer)
+                {
+                    <div class="option-label-correct">
+                        <label class="option-label">
+                            <input type="radio" name="option" value="@option" disabled="true"
+                                    checked="@(CurrentQuestion.SelectedAnswer == option)" />
+                            @option
+                        </label>
+                    </div>
+                }
+                else if(CurrentQuestion.SelectedAnswer == option && CurrentQuestion.SelectedAnswer != CurrentQuestion.CorrectAnswer)
+                {
+                    <div class="option-label-wrong">
+                        <label class="option-label">
+                            <input type="radio" name="option" value="@option" disabled="true"
+                                    checked="@(CurrentQuestion.SelectedAnswer == option)" />
+                            @option
+                        </label>
+                    </div>
+                }
+                else
+                {
+                    @if(CurrentQuestion.CorrectAnswer == option)
+                    {
+                        <div class="option-label-correct">
+                            <label class="option-label">
+                                <input type="radio" name="option" value="@option" disabled="true"
+                                        checked="@(CurrentQuestion.SelectedAnswer == option)" />
+                                @option
+                            </label>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="option-label">
+                            <input type="radio" name="option" value="@option" disabled="true"
+                                    checked="@(CurrentQuestion.SelectedAnswer == option)" />
+                            @option
+                        </label>
+                    }
+                }
+            }
+
+            <div class="answerValidation">
+                @if(string.IsNullOrEmpty(CurrentQuestion.SelectedAnswer))
+                {
+                    <div class="option-label-wrong">
+                        <label class="answerValidationLabel-wrong">Not Attempted !</label>
+                    </div>                    
+                }
+                else if(CurrentQuestion.CorrectAnswer == CurrentQuestion.SelectedAnswer)
+                {
+                    <div class="option-label-correct">
+                        <label class="answerValidationLabel-correct">Correct !</label>
+                    </div>
+                }
+                else
+                {
+                    <div class="option-label-wrong">
+                        <label class="answerValidationLabel-wrong">Wrong !</label>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation">
+        @if(!IsFistQuestion)
+        {
+            <button @onclick="PreviousQuestionPreview" class="btn btn-success">Previous</button>
+        }
+        @if (!IsLastQuestion)
+        {
+            <button @onclick="NextQuestionPreview" class="btn btn-primary">Next</button>
+        }
+    </div>
+<!-- View Response Design End-->
 }
 
 <style>
@@ -85,8 +183,11 @@ else
         right: 20px;
     }
 
-    .question-container {
-        margin-left: 40px;
+    .question-container 
+    {
+        display : grid;
+        margin: 70px;
+        text-align: center;
     }
 
     .question-number {
@@ -103,9 +204,11 @@ else
     }
 
     .options {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+        display: grid;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        gap: 20px;
     }
 
     .option-label {
@@ -113,7 +216,7 @@ else
         align-items: center;
         gap: 10px;
         padding: 10px 15px;
-        margin: 5px 0;
+        margin: 8px;
         background: #d6eaf8;
         border-radius: 5px;
         cursor: pointer;
@@ -125,10 +228,39 @@ else
         background: #aed6f1;
     }
 
+    .option-label-correct
+    {
+        background-color:hsla(120,100%,50%,0.3);
+    }
+
+    .option-label-wrong
+    {
+        background-color: hsla(0, 100%, 50%, 0.3);
+    }
+    
+    .answerValidation
+    {
+        text-align: center;   
+    }
+    .answerValidationLabel-wrong
+    {
+        margin: 8px;
+        font-weight: bold;
+        color: hsla(0, 100%, 50%, 0.6);
+    }
+    .answerValidationLabel-correct
+    {
+        margin: 8px;
+        font-weight: bold;
+        color: "#198754";
+    }
+
     .navigation {
         display: flex;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 40px;
+        flex-direction: row;
+        gap: 20px;
     }
 
     .btn {
@@ -147,6 +279,18 @@ else
         height: 100vh;
     }
 </style>
+
+<script>
+    window.registerBlurHandler = function (objRef) {
+        console.log("registerBlurHandler called");
+        window.addEventListener('blur', function () {
+            console.log("blur event detected");
+            objRef.invokeMethodAsync('MarkAssessmentAsCompleted')
+                .then(() => console.log("Method invoked"))
+                .catch(error => console.error("Error invoking method", error));
+        });
+    };
+</script>
 
 @code {
     private bool IsAssessmentCompleted = false;
@@ -170,6 +314,8 @@ else
     private string SelectedOption = "";
 
     private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
+    private bool IsFistQuestion => CurrentQuestionIndex == 0;
+    private bool RenderAnswers = false; //view response variable
     private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
 
     private string DisableBackAndRefreshJS = @"
@@ -181,12 +327,6 @@ else
             history.pushState(null, '', location.href);
         };
     ";
-
-    protected override async Task OnInitializedAsync()
-    {
-        StartTimer();
-        await JSRuntime.InvokeVoidAsync("eval", DisableBackAndRefreshJS);
-    }
 
     private void StartTimer()
     {
@@ -227,6 +367,7 @@ else
         {
             CurrentQuestionIndex++;
             SelectedOption = "";
+            Questions[CurrentQuestionIndex].TimeElapsed = (20 - TimeRemaining);
             StateHasChanged();
             StartTimer();
         }
@@ -247,11 +388,54 @@ else
         await JSRuntime.InvokeVoidAsync("eval", EnableNavigationJS);
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        StartTimer();
+        await JSRuntime.InvokeVoidAsync("eval", DisableBackAndRefreshJS);
+
+        var objRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("registerBlurHandler", objRef);
+        Console.WriteLine("JavaScript function registerBlurHandler called");
+    }
+
+    [JSInvokable]
+    public void MarkAssessmentAsCompleted()
+    {
+        try
+        {
+            IsAssessmentCompleted = true;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
     public class QuestionModel
     {
         public string QuestionText { get; set; }
         public List<string> Options { get; set; }
         public string CorrectAnswer { get; set; }
         public string SelectedAnswer { get; set; }
+        public int TimeElapsed { get; set; }
     }
+
+
+// code to view response start
+    private void ViewResponse()
+    {
+        RenderAnswers = true;
+        CurrentQuestionIndex = 0;
+    }
+
+    private void NextQuestionPreview()
+    {
+        CurrentQuestionIndex++;
+    }
+    private void PreviousQuestionPreview()
+    {
+        CurrentQuestionIndex--;
+    }
+// code to view response end
 }
