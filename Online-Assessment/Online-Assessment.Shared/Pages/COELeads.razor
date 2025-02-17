@@ -1,0 +1,364 @@
+@page "/COELeads"
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@using System.Collections.Generic
+
+
+<div class="selection-container">
+     <h3 class="section-title" style="text-align: center; color: #007BFF;">Admin Question Setup Screen</h3>
+    
+    <div class="grid-container">
+
+        <!-- User Type -->
+        <div class="grid-item">
+            <label>User Type:</label>
+            <div class="dropdown-container">
+            <div class="dropdown-header" onclick="toggleUserTypeDropdown()">
+                <span id="selectedUserTypePlaceholder">Select User Type</span>
+                <span class="dropdown-icon">&#9662;</span>
+            </div>
+            <div id="userTypeDropdown" class="dropdown-content">
+                <div class="checkbox-item">
+                <input type="checkbox" id="admin" value="admin" onchange="updateUserTypePlaceholder()">
+                <label for="admin">Internal</label>
+                </div>
+                <div class="checkbox-item">
+                <input type="checkbox" id="user" value="user" onchange="updateUserTypePlaceholder()">
+                <label for="user">External</label>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Username -->
+        <div class="grid-item">
+          
+        </div>
+
+        <!-- Technology Selection -->
+        <div class="grid-item">
+            <label>Select Technology:</label>
+            <select id="technology" onchange="updateSubTechnology()">
+                <option value="" disabled selected>Select Technology</option>
+                <option value="maui">.NET MAUI</option>
+                <option value="blazor">Blazor Framework</option>
+                <option value="web">Web Development</option>
+            </select>
+        </div>
+
+        <!-- Sub-Technology Selection -->
+        <div class="grid-item">
+            <label>Select Sub-Technology:</label>
+            <div id="subTechnologyDropdown" class="dropdown-container">
+                <div class="dropdown-header" onclick="toggleDropdown()">
+                    <span id="selectedSubTechPlaceholder">Select Sub-Technologies</span>
+                    <span class="dropdown-icon">&#9662;</span>
+                </div>
+                <div id="subTechnologyContainer" class="dropdown-content">
+                    <!-- Checkboxes dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Question Distribution -->
+        <div class="grid-item full-width">
+            <label>Question Distribution (No of Question):</label>
+            <div id="questionDistributionContainer" class="distribution-container">
+                <p style="color: gray;">(Select sub-technologies to define distribution)</p>
+            </div>
+        </div>
+
+        <div class="grid-item full-width">
+            <label>Total Questions:</label>
+             <input type="number" id="totalQuestions" value="0" min="1" />
+        </div>
+
+        <!-- Difficulty Level -->
+        <div class="grid-item">
+            <label>Difficulty Level:</label>
+            <select id="difficultyLevel">
+                <option value="" disabled selected>Select Difficulty</option>
+                <option value="easy">Low</option>
+                <option value="medium">Medium</option>
+                <option value="hard">High</option>
+            </select>
+        </div>
+
+        <!-- Time Limit -->
+        <div class="grid-item">
+            <label for="timeLimit">Time Limit (Each Question 20 sec):</label>
+            <input type="number" id="timeLimit" value="0"/>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="grid-item button-container">
+            <button onclick="submitTechnologySelection()">Submit</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function toggleUserTypeDropdown() {
+    let dropdown = document.getElementById("userTypeDropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+
+function updateUserTypePlaceholder() {
+    let selectedUserTypes = [];
+    document.querySelectorAll('#userTypeDropdown input[type=checkbox]:checked').forEach(checkbox => {
+        selectedUserTypes.push(checkbox.nextElementSibling.textContent);
+    });
+
+    let placeholder = document.getElementById("selectedUserTypePlaceholder");
+    placeholder.textContent = selectedUserTypes.length > 0 ? selectedUserTypes.join(", ") : "Select User Type ▼";
+}
+function updateSubTechnology() {
+    const subTechContainer = document.getElementById("subTechnologyContainer");
+    subTechContainer.innerHTML = ""; // Clear previous options
+
+    const techMap = {
+        "maui": ["HTML", "C#", "SQL"],
+        "blazor": ["Razor", "C#"],
+        "web": ["HTML", "CSS", "JavaScript"]
+    };
+
+    const selectedTech = document.getElementById("technology").value;
+
+    techMap[selectedTech].forEach(subTech => {
+        let checkboxWrapper = document.createElement("div");
+        checkboxWrapper.className = "checkbox-item";
+
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = subTech;
+        checkbox.id = subTech.toLowerCase();
+        checkbox.addEventListener("change", updatePlaceholderText);
+
+        let label = document.createElement("label");
+        label.htmlFor = subTech.toLowerCase();
+        label.textContent = subTech;
+
+        checkboxWrapper.appendChild(checkbox);
+        checkboxWrapper.appendChild(label);
+        subTechContainer.appendChild(checkboxWrapper);
+    });
+}
+
+function toggleDropdown() {
+    let dropdown = document.getElementById("subTechnologyContainer");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+
+function updatePlaceholderText() {
+    let selectedSubTechs = [];
+    document.querySelectorAll('#subTechnologyContainer input[type=checkbox]:checked').forEach(checkbox => {
+        selectedSubTechs.push(checkbox.value);
+    });
+
+    let placeholder = document.getElementById("selectedSubTechPlaceholder");
+    placeholder.textContent = selectedSubTechs.length > 0 ? selectedSubTechs.join(", ") : "Select Sub-Technologies ▼";
+
+    updateQuestionDistribution(selectedSubTechs);
+}
+
+function updateQuestionDistribution(selectedSubTechs) {
+    let distributionContainer = document.getElementById("questionDistributionContainer");
+    distributionContainer.innerHTML = "";
+
+    if (selectedSubTechs.length === 0) {
+        distributionContainer.innerHTML = `<p style="color: gray;">(Select sub-technologies to define distribution)</p>`;
+        return;
+    }
+
+    selectedSubTechs.forEach(subTech => {
+        let row = document.createElement("div");
+        row.className = "distribution-row";
+
+        let label = document.createElement("label");
+        label.textContent = subTech;
+
+        let input = document.createElement("input");
+        input.type = "number";
+        input.min = "1";
+        input.max = "100";
+        input.placeholder = "No of Questions";
+        input.className = "distribution-input";
+        input.style.width = "100%"; // Expand input to full width
+        input.addEventListener("change", updateTotalValues); // Add event listener
+
+        row.appendChild(label);
+        row.appendChild(input);
+        distributionContainer.appendChild(row);
+    });
+    updateTotalValues();
+}
+
+function submitTechnologySelection() {
+    let userType = document.getElementById("userType").value;
+    let username = document.getElementById("username").value;
+    let difficulty = document.getElementById("difficultyLevel").value;
+    let timeLimit = document.getElementById("timeLimit").value;
+
+    let selectedSubTechs = [];
+    document.querySelectorAll('#subTechnologyContainer input[type=checkbox]:checked').forEach(checkbox => {
+        selectedSubTechs.push(checkbox.value);
+    });
+
+    let questionDistribution = {};
+    document.querySelectorAll("#questionDistributionContainer .distribution-row").forEach(row => {
+        let tech = row.querySelector("label").textContent;
+        let percent = row.querySelector("input").value;
+        questionDistribution[tech] = percent || "0%";
+    });
+
+    alert("User Type: " + userType + "\n" +
+          "Username: " + username + "\n" +
+          "Selected Sub-Technologies: " + selectedSubTechs.join(", ") + "\n" +
+          "Question Distribution: " + JSON.stringify(questionDistribution, null, 2) + "\n" +
+          "Difficulty Level: " + difficulty + "\n" +
+          "Time Limit: " + timeLimit + " seconds");
+}
+
+function updateTotalValues() {
+    let total = 0;
+    document.querySelectorAll(".distribution-input").forEach(input => {
+        total += parseInt(input.value) || 0;
+    });
+    document.getElementById("totalQuestions").value = total;
+    document.getElementById("timeLimit").value = total * 20;
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById("subTechnologyDropdown");
+    const dropdownContainer = document.getElementById("subTechnologyContainer");
+    if (!dropdown.contains(event.target)) {
+        dropdownContainer.style.display = "none";
+    }
+});
+</script>
+
+<style>
+    
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full screen height */
+    margin: 0;
+    background-color: #f4f4f4; /* Optional: Light gray background */
+}
+
+.selection-container {
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+}
+
+input, select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    grid-column: span 2;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Dropdown Container */
+.dropdown-container {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    position: relative;
+    cursor: pointer;
+    padding: 10px;
+}
+ 
+/* Dropdown Header */
+.dropdown-header {
+    display: flex;                  /* Use Flexbox for alignment */
+    justify-content: space-between; /* Space out content */
+    align-items: center;            /* Vertically center items */
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+ 
+/* Dropdown Icon */
+.dropdown-icon {
+    font-size: 16px;  /* Adjust size as needed */
+    color: #333;      /* Optional: change the icon color */
+}
+ 
+/* Dropdown Content */
+.dropdown-content {
+    position: absolute;
+    top: 100%;      /* Position below the header */
+    left: 0;        /* Align with the container's left edge */
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;  /* Change to 'block' when active */
+    z-index: 10;
+    padding: 8px;
+}
+ 
+/* Checkbox Item Styling */
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+}
+ 
+.checkbox-item input {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+}
+ 
+.checkbox-item label {
+    font-size: 14px;
+}
+
+</style>
