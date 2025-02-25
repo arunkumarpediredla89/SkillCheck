@@ -1,12 +1,17 @@
 ﻿@page "/assessmentPage"
-
+ 
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @using System.Timers
-
+@using KristofferStrube.Blazor.DOM
+@using KristofferStrube.Blazor.FileAPI
+@using KristofferStrube.Blazor.MediaCaptureStreams
+@using KristofferStrube.Blazor.MediaStreamRecording
+@using KristofferStrube.Blazor.WebIDL.Exceptions
+ 
 <PageTitle>React Native Assessment</PageTitle>
-
+ 
 <!-- Exam Header -->
 @if (!IsAssessmentCompleted)
 {
@@ -15,7 +20,7 @@
         <span class="time-left"><strong>Time Left: </strong> <span id="timer">@($"{TimeRemaining}s")</span></span>
     </div>
 }
-
+ 
 <!-- Question Section -->
 @if (!IsAssessmentCompleted)
 {
@@ -37,7 +42,7 @@
             }
         </div>
     </div>
-
+ 
     <!-- Navigation Buttons -->
     <div class="navigation">
         @if (!IsLastQuestion)
@@ -58,12 +63,13 @@ else
         <div class="completion-message">
             <h2>You have completed the assessment.</h2>
             <p>Thank you for your participation!</p>
-
+ 
             <button @onclick="ViewResponse" class="btn btn-success">View Response</button>
+             <a href="@combinedBlobURL" target="_blank" download>Download</a>
         </div>
     }
 }
-
+ 
 <!-- View Response Design Start-->
 @if(RenderAnswers)
 {
@@ -118,7 +124,7 @@ else
                     }
                 }
             }
-
+ 
             <div class="answerValidation">
                 @if(string.IsNullOrEmpty(CurrentQuestion.SelectedAnswer))
                 {
@@ -141,7 +147,7 @@ else
             </div>
         </div>
     </div>
-
+ 
     <!-- Navigation Buttons -->
     <div class="navigation">
         @if(!IsFistQuestion)
@@ -155,7 +161,7 @@ else
     </div>
 <!-- View Response Design End-->
 }
-
+ 
 <style>
     .exam-header {
         display: flex;
@@ -165,7 +171,7 @@ else
         text-align: center;
         width: 100%;
     }
-
+ 
     .exam-title {
         flex-grow: 1;
         text-align: center;
@@ -173,7 +179,7 @@ else
         font-size: 24px;
         font-weight: bold;
     }
-
+ 
     .time-left {
         font-size: 18px;
         background: #e0f7fa;
@@ -182,27 +188,27 @@ else
         position: absolute;
         right: 20px;
     }
-
-    .question-container 
+ 
+    .question-container
     {
         display : grid;
         margin: 70px;
         text-align: center;
     }
-
+ 
     .question-number {
         font-size: 18px;
         font-weight: bold;
         margin-top: 30px;
         margin-bottom: 30px;
     }
-
+ 
     .question-text {
         font-size: 16px;
         margin-top: 30px;
         margin-bottom: 30px;
     }
-
+ 
     .options {
         display: grid;
         margin-left: auto;
@@ -210,7 +216,7 @@ else
         width: 50%;
         gap: 20px;
     }
-
+ 
     .option-label {
         display: flex;
         align-items: center;
@@ -223,24 +229,24 @@ else
         width: fit-content;
         transition: background-color 0.3s ease;
     }
-
+ 
     .option-label:hover {
         background: #aed6f1;
     }
-
+ 
     .option-label-correct
     {
         background-color:hsla(120,100%,50%,0.3);
     }
-
+ 
     .option-label-wrong
     {
         background-color: hsla(0, 100%, 50%, 0.3);
     }
-    
+   
     .answerValidation
     {
-        text-align: center;   
+        text-align: center;  
     }
     .answerValidationLabel-wrong
     {
@@ -254,7 +260,7 @@ else
         font-weight: bold;
         color: "#198754";
     }
-
+ 
     .navigation {
         display: flex;
         justify-content: center;
@@ -262,14 +268,14 @@ else
         flex-direction: row;
         gap: 20px;
     }
-
+ 
     .btn {
         padding: 8px 12px;
         font-size: 14px;
         border-radius: 5px;
         width: 150px;
     }
-
+ 
     .completion-message {
         display: flex;
         flex-direction: column;
@@ -279,7 +285,7 @@ else
         height: 100vh;
     }
 </style>
-
+ 
 <script>
     window.registerBlurHandler = function (objRef) {
         console.log("registerBlurHandler called");
@@ -291,7 +297,7 @@ else
         });
     };
 </script>
-
+ 
 @code {
     private bool IsAssessmentCompleted = false;
     private int TimeRemaining = 20; // 20 seconds per question
@@ -309,15 +315,15 @@ else
         new QuestionModel { QuestionText = "Command to create a new React Native project?", Options = new List<string> { "react-native init", "npx create-react-native-app", "npm init react-native", "npx react-native init" }, CorrectAnswer = "npx react-native init" },
         new QuestionModel { QuestionText = "Command to install React Native CLI globally?", Options = new List<string> { "npm install -g react-native-cli", "npm install -g create-react-native-app", "npm install -g react-native", "npm install -g npx" }, CorrectAnswer = "npm install -g react-native-cli" }    
     };
-
+ 
     private int CurrentQuestionIndex = 0;
     private string SelectedOption = "";
-
+ 
     private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
     private bool IsFistQuestion => CurrentQuestionIndex == 0;
     private bool RenderAnswers = false; //view response variable
     private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
-
+ 
     private string DisableBackAndRefreshJS = @"
         window.onbeforeunload = function() {
             return 'Are you sure you want to leave? Your progress will be lost.';
@@ -327,7 +333,7 @@ else
             history.pushState(null, '', location.href);
         };
     ";
-
+ 
     private void StartTimer()
     {
         questionTimer?.Dispose();
@@ -336,7 +342,7 @@ else
         questionTimer.Elapsed += TimerElapsed;
         questionTimer.Start();
     }
-
+ 
     private async void TimerElapsed(object sender, ElapsedEventArgs e)
     {
         if (TimeRemaining > 0)
@@ -353,14 +359,14 @@ else
             });
         }
     }
-
+ 
     private void SelectOption(string option)
     {
         SelectedOption = option;
         Questions[CurrentQuestionIndex].SelectedAnswer = option;
         StateHasChanged();
     }
-
+ 
     private void NextQuestion()
     {
         if (!IsLastQuestion)
@@ -376,7 +382,7 @@ else
             SubmitExam();
         }
     }
-
+ 
     private async void SubmitExam()
     {
         questionTimer?.Dispose();
@@ -386,18 +392,134 @@ else
             window.onpopstate = null;
         ";
         await JSRuntime.InvokeVoidAsync("eval", EnableNavigationJS);
+ 
+        await StopRecording();
     }
-
+ 
+    private string? error;
+    private MediaStream? mediaStream;
+    private readonly List<(string label, string id)> videoOptions = [];
+    private string? selectedVideoSource;
+ 
+    private MediaRecorder? recorder;
+    private EventListener<BlobEvent>? dataAvailableEventListener;
+    private string combinedBlobURL = "";
+    private URLService urlService;
+ 
     protected override async Task OnInitializedAsync()
     {
+        urlService = new URLService(JSRuntime);
+        await OpenVideoStream();
+        await StartRecording();
         StartTimer();
         await JSRuntime.InvokeVoidAsync("eval", DisableBackAndRefreshJS);
-
+ 
         var objRef = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("registerBlurHandler", objRef);
         Console.WriteLine("JavaScript function registerBlurHandler called");
     }
-
+    private readonly List<Blob> blobsRecorded = [];
+    private bool playing = false;
+    private ElementReference videoElement;
+   
+    public async Task OpenVideoStream()
+    {
+          try
+        {
+            var mediaTrackConstraints = new MediaTrackConstraints
+            {
+                DeviceId = selectedVideoSource is null ? null : new ConstrainDomString(selectedVideoSource)
+            };
+ 
+            var mediaDevicesService = new MediaDevicesService(JSRuntime);
+            MediaDevices mediaDevices = await mediaDevicesService.GetMediaDevicesAsync();
+            mediaStream = await mediaDevices.GetUserMediaAsync(new MediaStreamConstraints() { Video = mediaTrackConstraints });
+ 
+            MediaDeviceInfo[] deviceInfos = await mediaDevices.EnumerateDevicesAsync();
+            videoOptions.Clear();
+            foreach (MediaDeviceInfo device in deviceInfos)
+            {
+                if (await device.GetKindAsync() is MediaDeviceKind.VideoInput)
+                {
+                    videoOptions.Add((await device.GetLabelAsync(), await device.GetDeviceIdAsync()));
+                }
+            }
+ 
+            StateHasChanged();
+            // We don't have a wrapper for HtmlMediaElement's yet so we use simple JSInterop for this part.
+            IJSObjectReference htmlMediaElement = await JSRuntime.InvokeAsync<IJSObjectReference>("getReference", videoElement);
+            await JSRuntime.InvokeVoidAsync("setAttribute", htmlMediaElement, "srcObject", mediaStream);
+        }
+        catch (WebIDLException ex)
+        {
+            error = $"{ex.GetType().Name}: {ex.Message}";
+        }
+    }
+ 
+     private async Task StartRecording()
+    {
+        if (mediaStream is null)
+        {
+            return;
+        }
+ 
+        try
+        {
+            recorder = await MediaRecorder.CreateAsync(JSRuntime, mediaStream);
+ 
+            dataAvailableEventListener = await EventListener<BlobEvent>.CreateAsync(JSRuntime, async (BlobEvent e) =>
+            {
+                Blob blob = await e.GetDataAsync();
+                blobsRecorded.Add(blob);
+            });
+            await recorder.AddOnDataAvailableEventListenerAsync(dataAvailableEventListener);
+ 
+            await recorder.StartAsync();
+ 
+            StateHasChanged();
+            // We don't have a wrapper for HtmlMediaElement's yet so we use simple JSInterop for this part.
+            IJSObjectReference htmlMediaElement = await JSRuntime.InvokeAsync<IJSObjectReference>("getReference", videoElement);
+            await JSRuntime.InvokeVoidAsync("setAttribute", htmlMediaElement, "srcObject", mediaStream);
+        }
+        catch (WebIDLException ex)
+        {
+            error = $"{ex.GetType().Name}: {ex.Message}";
+        }
+    }
+ 
+    private async Task StopRecording()
+    {
+ 
+        try
+        {
+            MediaStreamTrack[] videoTracks = await mediaStream.GetVideoTracksAsync();
+            foreach (MediaStreamTrack track in videoTracks)
+            {
+                await track.StopAsync();
+                await track.DisposeAsync();
+            }
+ 
+            await recorder.StopAsync();
+            await recorder.RemoveOnDataAvailableEventListenerAsync(dataAvailableEventListener);
+            await dataAvailableEventListener.DisposeAsync();
+            await recorder.DisposeAsync();
+ 
+            await using Blob combinedBlob = await Blob.CreateAsync(JSRuntime, [.. blobsRecorded], new() { Type = await blobsRecorded.First().GetTypeAsync() });
+            combinedBlobURL = await urlService.CreateObjectURLAsync(combinedBlob);
+ 
+            foreach (Blob blob in blobsRecorded)
+            {
+                await blob.DisposeAsync();
+            }
+        }
+        catch (WebIDLException ex)
+        {
+            error = $"{ex.GetType().Name}: {ex.Message}";
+        }
+    }
+ 
+ 
+ 
     [JSInvokable]
     public void MarkAssessmentAsCompleted()
     {
@@ -411,7 +533,7 @@ else
             Console.WriteLine($"Error: {ex.Message}");
         }
     }
-
+ 
     public class QuestionModel
     {
         public string QuestionText { get; set; }
@@ -420,15 +542,15 @@ else
         public string SelectedAnswer { get; set; }
         public int TimeElapsed { get; set; }
     }
-
-
+ 
+ 
 // code to view response start
     private void ViewResponse()
     {
         RenderAnswers = true;
         CurrentQuestionIndex = 0;
     }
-
+ 
     private void NextQuestionPreview()
     {
         CurrentQuestionIndex++;
