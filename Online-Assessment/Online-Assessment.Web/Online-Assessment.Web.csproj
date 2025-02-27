@@ -9,6 +9,7 @@
 	
 
   <ItemGroup>
+    <PackageReference Include="KristofferStrube.Blazor.MediaStreamRecording" Version="0.1.0-alpha.2" /> 
     <ProjectReference Include="..\Online-Assessment.Web.Client\Online-Assessment.Web.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0" />
   </ItemGroup>
