@@ -65,6 +65,12 @@ else
             <p>Thank you for your participation!</p>
  
             <button @onclick="ViewResponse" class="btn btn-success">View Response</button>
+
+        @if(ShowDownloadVideoButton)
+        {
+            <button @onclick="DownloadMediaRecording" class="btn btn-success">Download</button>
+        }
+            @* <a href="@combinedBlobURL" target="_blank" download>Download Recording</a> *@
         </div>
     }
 }
@@ -282,6 +288,7 @@ else
         justify-content: center;
         text-align: center;
         height: 100vh;
+        gap:15px;
     }
 </style>
  
@@ -321,6 +328,8 @@ else
     private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
     private bool IsFistQuestion => CurrentQuestionIndex == 0;
     private bool RenderAnswers = false; //view response variable
+
+    private bool ShowDownloadVideoButton = false; //view response variable
     private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
  
     private string DisableBackAndRefreshJS = @"
@@ -506,6 +515,8 @@ else
             await using Blob combinedBlob = await Blob.CreateAsync(JSRuntime, [.. blobsRecorded], new() { Type = await blobsRecorded.First().GetTypeAsync() });
             combinedBlobURL = await urlService.CreateObjectURLAsync(combinedBlob);
  
+            ShowDownloadVideoButton = true;
+
             foreach (Blob blob in blobsRecorded)
             {
                 await blob.DisposeAsync();
@@ -516,7 +527,11 @@ else
             error = $"{ex.GetType().Name}: {ex.Message}";
         }
     }
- 
+
+    private async Task DownloadMediaRecording()
+    {
+        await JSRuntime.InvokeVoidAsync("open", combinedBlobURL, "_blank");
+    }
  
  
     [JSInvokable]
