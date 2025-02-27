@@ -1,9 +1,10 @@
-﻿@page "/assessmentPage"
+@page "/assessmentPage"
 
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @using System.Timers
+@using SkiaSharp
 
 <PageTitle>React Native Assessment</PageTitle>
 
@@ -17,12 +18,12 @@
 }
 
 <!-- Question Section -->
-@if (!IsAssessmentCompleted)
+@if (!IsAssessmentCompleted && CurrentQuestion != null)
 {
     <div class="question-container">
         <div class="question-title">
             <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
-            <p class="question-text">@CurrentQuestion.QuestionText</p>
+            <img src="@CurrentQuestion.QuestionText" class="question-text"/>
         </div>
         <!-- Options -->
         <div class="options">
@@ -70,7 +71,7 @@ else
     <div class="question-container">
         <div class="question-title">
             <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
-            <p class="question-text">@CurrentQuestion.QuestionText</p>
+             <img src="@CurrentQuestion.QuestionText" class="question-text"/>
         </div>
         <!-- Options -->
         <div class="options">
@@ -296,19 +297,31 @@ else
     private bool IsAssessmentCompleted = false;
     private int TimeRemaining = 20; // 20 seconds per question
     private Timer questionTimer;
-    private List<QuestionModel> Questions = new()
+    private List<QuestionModel> Questions = new();
+    
+    protected override async Task OnInitializedAsync()
     {
-        new QuestionModel { QuestionText = "What is React Native?", Options = new List<string> { "A web framework", "A mobile app library", "A desktop tool", "A VCS" }, CorrectAnswer = "A mobile app library" },
-        new QuestionModel { QuestionText = "Which language is used in React Native?", Options = new List<string> { "JavaScript", "Python", "Java", "Swift" }, CorrectAnswer = "JavaScript" },
-        new QuestionModel { QuestionText = "Which core component creates a container?", Options = new List<string> { "View", "Container", "Div", "Frame" }, CorrectAnswer = "View" },
-        new QuestionModel { QuestionText = "Which is NOT a valid React Native component?", Options = new List<string> { "Text", "Button", "Image", "Link" }, CorrectAnswer = "Link" },
-        new QuestionModel { QuestionText = "Which component is used to render scrollable content?", Options = new List<string> { "FlatList", "ScrollView", "SectionList", "Text" }, CorrectAnswer = "ScrollView" },
-        new QuestionModel { QuestionText = "Which file is the entry point?", Options = new List<string> { "App.js", "Index.js", "Main.js", "App.json" }, CorrectAnswer = "Index.js" },
-        new QuestionModel { QuestionText = "Command to run a React Native app on Android?", Options = new List<string> { "react-native run-android", "react-native run-ios", "npm start", "npx react-native run-android" }, CorrectAnswer = "npx react-native run-android" },
-        new QuestionModel { QuestionText = "Command to run React Native app in dev mode?", Options = new List<string> { "react-native run-android", "react-native run-ios", "npm start", "npx react-native run-ios" }, CorrectAnswer = "react-native run-android" },
-        new QuestionModel { QuestionText = "Command to create a new React Native project?", Options = new List<string> { "react-native init", "npx create-react-native-app", "npm init react-native", "npx react-native init" }, CorrectAnswer = "npx react-native init" },
-        new QuestionModel { QuestionText = "Command to install React Native CLI globally?", Options = new List<string> { "npm install -g react-native-cli", "npm install -g create-react-native-app", "npm install -g react-native", "npm install -g npx" }, CorrectAnswer = "npm install -g react-native-cli" }    
-    };
+        StartTimer();
+        await JSRuntime.InvokeVoidAsync("eval", DisableBackAndRefreshJS);
+    
+        var objRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("registerBlurHandler", objRef);
+        Console.WriteLine("JavaScript function registerBlurHandler called");
+    
+        Questions = new List<QuestionModel>
+        {
+            new QuestionModel { QuestionText = await GenerateQuestionImage("What is React Native?", 1), Options = new List<string> { "A web framework", "A mobile app library", "A desktop tool", "A VCS" }, CorrectAnswer = "A mobile app library" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Which language is used in React Native?",2), Options = new List<string> { "JavaScript", "Python", "Java", "Swift" }, CorrectAnswer = "JavaScript" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Which core component creates a container?",3), Options = new List<string> { "View", "Container", "Div", "Frame" }, CorrectAnswer = "View" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Which is NOT a valid React Native component?", 4), Options = new List<string> { "Text", "Button", "Image", "Link" }, CorrectAnswer = "Link" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Which component is used to render scrollable content?",5), Options = new List<string> { "FlatList", "ScrollView", "SectionList", "Text" }, CorrectAnswer = "ScrollView" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Which file is the entry point?", 6), Options = new List<string> { "App.js", "Index.js", "Main.js", "App.json" }, CorrectAnswer = "Index.js" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Command to run a React Native app on Android?",7), Options = new List<string> { "react-native run-android", "react-native run-ios", "npm start", "npx react-native run-android" }, CorrectAnswer = "npx react-native run-android" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Command to run React Native app in dev mode?",8), Options = new List<string> { "react-native run-android", "react-native run-ios", "npm start", "npx react-native run-ios" }, CorrectAnswer = "react-native run-android" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Command to create a new React Native project?",9), Options = new List<string> { "react-native init", "npx create-react-native-app", "npm init react-native", "npx react-native init" }, CorrectAnswer = "npx react-native init" },
+            new QuestionModel { QuestionText = await GenerateQuestionImage("Command to install React Native CLI globally?",10), Options = new List<string> { "npm install -g react-native-cli", "npm install -g create-react-native-app", "npm install -g react-native", "npm install -g npx" }, CorrectAnswer = "npm install -g react-native-cli" }    
+        };
+    }
 
     private int CurrentQuestionIndex = 0;
     private string SelectedOption = "";
@@ -316,7 +329,7 @@ else
     private bool IsLastQuestion => CurrentQuestionIndex == Questions.Count - 1;
     private bool IsFistQuestion => CurrentQuestionIndex == 0;
     private bool RenderAnswers = false; //view response variable
-    private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
+    private QuestionModel? CurrentQuestion => Questions.Count > 0 ? Questions[CurrentQuestionIndex] : null;
 
     private string DisableBackAndRefreshJS = @"
         window.onbeforeunload = function() {
@@ -367,7 +380,10 @@ else
         {
             CurrentQuestionIndex++;
             SelectedOption = "";
-            Questions[CurrentQuestionIndex].TimeElapsed = (20 - TimeRemaining);
+            if (CurrentQuestionIndex >= 0 && CurrentQuestionIndex < Questions.Count)
+            {
+                Questions[CurrentQuestionIndex].TimeElapsed = (20 - TimeRemaining);
+            }
             StateHasChanged();
             StartTimer();
         }
@@ -388,15 +404,6 @@ else
         await JSRuntime.InvokeVoidAsync("eval", EnableNavigationJS);
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        StartTimer();
-        await JSRuntime.InvokeVoidAsync("eval", DisableBackAndRefreshJS);
-
-        var objRef = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("registerBlurHandler", objRef);
-        Console.WriteLine("JavaScript function registerBlurHandler called");
-    }
 
     [JSInvokable]
     public void MarkAssessmentAsCompleted()
@@ -414,7 +421,7 @@ else
 
     public class QuestionModel
     {
-        public string QuestionText { get; set; }
+        public string? QuestionText { get; set; }
         public List<string> Options { get; set; }
         public string CorrectAnswer { get; set; }
         public string SelectedAnswer { get; set; }
@@ -436,6 +443,101 @@ else
     private void PreviousQuestionPreview()
     {
         CurrentQuestionIndex--;
+    }
+
+     private async Task<string> GenerateQuestionImage(string text, int questionId)
+    {
+        return await Task.Run(() =>
+        {
+            using var paint = new SKPaint
+            {
+                Color = SKColors.Black,
+                IsAntialias = true
+            };
+            using var font = new SKFont(SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold), 40)
+            {
+                Size = 40
+            };
+
+            // Measure text size
+            var wrappedText = WrapText(text, font, 800 - 40);
+            float textHeight = wrappedText.Count * (font.Size + 10);
+            float imageHeight = textHeight + 100; // Add some padding
+
+            using var bitmap = new SKBitmap(800, (int)imageHeight);
+            using var canvas = new SKCanvas(bitmap);
+            canvas.Clear(SKColors.White);
+
+            // Main question text
+            var questionPaint = new SKPaint
+            {
+                Color = SKColors.Black,
+                IsAntialias = true
+            };
+            using var questionFont = new SKFont(SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold), 40)
+            {
+                Size = 40
+            };
+            var annotationPaint = new SKPaint
+            {
+                Color = SKColors.Gray,
+                IsAntialias = true
+            };
+            using var annotationFont = new SKFont(SKTypeface.FromFamilyName("Arial", SKFontStyle.Italic), 24)
+            {
+                Size = 24
+            };
+
+            // Draw question text
+            float textX = 20, textY = 100;
+            @* string questionIdText = $"Question ID: {questionId}"; *@
+            foreach (var line in wrappedText)
+            {
+                canvas.DrawText(line, textX, textY, questionFont, questionPaint);
+                textY += questionFont.Size + 10; // Adjust line spacing
+            }
+
+            // Draw Question ID annotation
+            //canvas.DrawText(questionIdText, 600, 40, annotationFont, annotationPaint);
+
+            // Convert to Base64 string
+            using var image = SKImage.FromBitmap(bitmap);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            using var ms = new MemoryStream();
+            data.SaveTo(ms);
+            var base64 = Convert.ToBase64String(ms.ToArray());
+            return $"data:image/png;base64,{base64}";
+        });
+    }
+
+    private List<string> WrapText(string text, SKFont font, float maxWidth)
+    {
+        var words = text.Split(' ');
+        var lines = new List<string>();
+        var currentLine = string.Empty;
+
+        foreach (var word in words)
+        {
+            var testLine = string.IsNullOrEmpty(currentLine) ? word : currentLine + " " + word;
+            var textWidth = font.MeasureText(testLine);
+
+            if (textWidth > maxWidth)
+            {
+                lines.Add(currentLine);
+                currentLine = word;
+            }
+            else
+            {
+                currentLine = testLine;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(currentLine))
+        {
+            lines.Add(currentLine);
+        }
+
+        return lines;
     }
 // code to view response end
 }
