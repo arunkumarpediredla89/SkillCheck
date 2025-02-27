@@ -11,6 +11,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Online-Assessment.Web.Client\Online-Assessment.Web.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0" />
+    <PackageReference Include="SkiaSharp" Version="3.118.0-preview.2.3" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.118.0-preview.2.3" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.9" />
   </ItemGroup>
 
 </Project>
