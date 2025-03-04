@@ -1,4 +1,4 @@
-﻿@page "/assessmentPage"
+@page "/assessmentPage"
  
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
@@ -9,6 +9,7 @@
 @using KristofferStrube.Blazor.MediaCaptureStreams
 @using KristofferStrube.Blazor.MediaStreamRecording
 @using KristofferStrube.Blazor.WebIDL.Exceptions
+@using SkiaSharp
  
 <PageTitle>React Native Assessment</PageTitle>
  
@@ -27,7 +28,7 @@
     <div class="question-container">
         <div class="question-title">
             <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
-            <p class="question-text">@CurrentQuestion.QuestionText</p>
+            <img src="@CurrentQuestion.QuestionText" class="question-text"/>
         </div>
         <!-- Options -->
         <div class="options">
@@ -81,7 +82,8 @@ else
     <div class="question-container">
         <div class="question-title">
             <h2 class="question-number">Question @($"{CurrentQuestionIndex + 1} of {Questions.Count}")</h2>
-            <p class="question-text">@CurrentQuestion.QuestionText</p>
+            @* <p class="question-text">@CurrentQuestion.QuestionText</p> *@
+             <img src="@CurrentQuestion.QuestionText" class="question-text"/>
         </div>
         <!-- Options -->
         <div class="options">
@@ -308,8 +310,9 @@ else
     private bool IsAssessmentCompleted = false;
     private int TimeRemaining = 20; // 20 seconds per question
     private Timer questionTimer;
+ 
     private List<QuestionModel> Questions = new()
-    {
+    { 
         new QuestionModel { QuestionText = "What is React Native?", Options = new List<string> { "A web framework", "A mobile app library", "A desktop tool", "A VCS" }, CorrectAnswer = "A mobile app library" },
         new QuestionModel { QuestionText = "Which language is used in React Native?", Options = new List<string> { "JavaScript", "Python", "Java", "Swift" }, CorrectAnswer = "JavaScript" },
         new QuestionModel { QuestionText = "Which core component creates a container?", Options = new List<string> { "View", "Container", "Div", "Frame" }, CorrectAnswer = "View" },
@@ -321,6 +324,14 @@ else
         new QuestionModel { QuestionText = "Command to create a new React Native project?", Options = new List<string> { "react-native init", "npx create-react-native-app", "npm init react-native", "npx react-native init" }, CorrectAnswer = "npx react-native init" },
         new QuestionModel { QuestionText = "Command to install React Native CLI globally?", Options = new List<string> { "npm install -g react-native-cli", "npm install -g create-react-native-app", "npm install -g react-native", "npm install -g npx" }, CorrectAnswer = "npm install -g react-native-cli" }    
     };
+
+    public async Task QuestionImage()
+    {
+        foreach (var question in Questions)
+        {
+            question.QuestionText = await GenerateQuestionImage(question.QuestionText, 1);
+        }
+    }
  
     private int CurrentQuestionIndex = 0;
     private string SelectedOption = "";
@@ -330,7 +341,8 @@ else
     private bool RenderAnswers = false; //view response variable
 
     private bool ShowDownloadVideoButton = false; //view response variable
-    private QuestionModel CurrentQuestion => Questions[CurrentQuestionIndex];
+
+    private QuestionModel? CurrentQuestion => Questions[CurrentQuestionIndex];
  
     private string DisableBackAndRefreshJS = @"
         window.onbeforeunload = function() {
@@ -417,6 +429,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         urlService = new URLService(JSRuntime);
+        await QuestionImage();
         await OpenVideoStream();
         await StartRecording();
         StartTimer();
@@ -425,6 +438,7 @@ else
         var objRef = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("registerBlurHandler", objRef);
         Console.WriteLine("JavaScript function registerBlurHandler called");
+
     }
     private readonly List<Blob> blobsRecorded = [];
     private bool playing = false;
@@ -526,6 +540,101 @@ else
         {
             error = $"{ex.GetType().Name}: {ex.Message}";
         }
+    }
+
+     private async Task<string> GenerateQuestionImage(string text, int questionId)
+    {
+        return await Task.Run(() =>
+        {
+            using var paint = new SKPaint
+            {
+                Color = SKColors.Black,
+                IsAntialias = true
+            };
+            using var font = new SKFont(SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold), 40)
+            {
+                Size = 40
+            };
+
+            // Measure text size
+            var wrappedText = WrapText(text, font, 800 - 40);
+            float textHeight = wrappedText.Count * (font.Size + 10);
+            float imageHeight = textHeight + 100; // Add some padding
+
+            using var bitmap = new SKBitmap(800, (int)imageHeight);
+            using var canvas = new SKCanvas(bitmap);
+            canvas.Clear(SKColors.White);
+
+            // Main question text
+            var questionPaint = new SKPaint
+            {
+                Color = SKColors.Black,
+                IsAntialias = true
+            };
+            using var questionFont = new SKFont(SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold), 40)
+            {
+                Size = 40
+            };
+            var annotationPaint = new SKPaint
+            {
+                Color = SKColors.Gray,
+                IsAntialias = true
+            };
+            using var annotationFont = new SKFont(SKTypeface.FromFamilyName("Arial", SKFontStyle.Italic), 24)
+            {
+                Size = 24
+            };
+
+            // Draw question text
+            float textX = 20, textY = 100;
+            @* string questionIdText = $"Question ID: {questionId}"; *@
+            foreach (var line in wrappedText)
+            {
+                canvas.DrawText(line, textX, textY, questionFont, questionPaint);
+                textY += questionFont.Size + 10; // Adjust line spacing
+            }
+
+            // Draw Question ID annotation
+            //canvas.DrawText(questionIdText, 600, 40, annotationFont, annotationPaint);
+
+            // Convert to Base64 string
+            using var image = SKImage.FromBitmap(bitmap);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            using var ms = new MemoryStream();
+            data.SaveTo(ms);
+            var base64 = Convert.ToBase64String(ms.ToArray());
+            return $"data:image/png;base64,{base64}";
+        });
+    }
+
+    private List<string> WrapText(string text, SKFont font, float maxWidth)
+    {
+        var words = text.Split(' ');
+        var lines = new List<string>();
+        var currentLine = string.Empty;
+
+        foreach (var word in words)
+        {
+            var testLine = string.IsNullOrEmpty(currentLine) ? word : currentLine + " " + word;
+            var textWidth = font.MeasureText(testLine);
+
+            if (textWidth > maxWidth)
+            {
+                lines.Add(currentLine);
+                currentLine = word;
+            }
+            else
+            {
+                currentLine = testLine;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(currentLine))
+        {
+            lines.Add(currentLine);
+        }
+
+        return lines;
     }
 
     private async Task DownloadMediaRecording()
