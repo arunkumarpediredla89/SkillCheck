@@ -1,9 +1,17 @@
 ﻿@page "/COELeadListPage"
 @using Model
 @using Online_Assessment.Shared.Services
+@using PdfSharp
+@using PdfSharp.Fonts
+@using PdfSharp.Snippets.Font
 @using global::Services
 @inject NavigationManager NavigationManager
 @inject AdminQuestionService AdminQuestionService
+@inject IJSRuntime JSRuntime
+@using PdfSharp.Pdf
+@using PdfSharp.Drawing
+@using MigraDoc.DocumentObjectModel
+@using MigraDoc.Rendering
 
 <div class="flex justify-center items-center min-h-screen bg-gray-100 p-6">
     <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-6xl">
@@ -13,90 +21,91 @@
                 <div class="mb-4 customDIv">
                     <div class="addBtnClass mb-4">
                         <button class="btn-add" @onclick="AddNewUser">➕ Add</button>
+                        <button @onclick="GeneratePDF_File">Generate PDF</button>
                     </div>
-                <table class="w-full table-fixed border border-gray-300 text-center">
-                    <thead class="bg-blue-600 text-blue-700 text-lg">
-                        <tr>
-                            <th class="px-6 py-4 border border-gray-300">Technology</th>
-                            <th class="px-6 py-4 border border-gray-300">Sub-Technologies</th>
-                            <th class="px-6 py-4 border border-gray-300">No Of Question</th>
-                            <th class="px-6 py-4 border border-gray-300">User Type</th>
-                            <th class="px-6 py-4 border border-gray-300">Total No Of Questions</th>
-                            <th class="px-6 py-4 border border-gray-300">Total Time</th>
-                            <th class="px-6 py-4 border border-gray-300">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-300 bg-white text-lg">
-                        @if (Questions.Any())
-                        {
-                            @foreach (var user in Questions)
+                    <table class="w-full table-fixed border border-gray-300 text-center">
+                        <thead class="bg-blue-600 text-blue-700 text-lg">
+                            <tr>
+                                <th class="px-6 py-4 border border-gray-300">Technology</th>
+                                <th class="px-6 py-4 border border-gray-300">Sub-Technologies</th>
+                                <th class="px-6 py-4 border border-gray-300">No Of Question</th>
+                                <th class="px-6 py-4 border border-gray-300">User Type</th>
+                                <th class="px-6 py-4 border border-gray-300">Total No Of Questions</th>
+                                <th class="px-6 py-4 border border-gray-300">Total Time</th>
+                                <th class="px-6 py-4 border border-gray-300">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-300 bg-white text-lg">
+                            @if (Questions.Any())
                             {
-                                <tr class="hover:bg-gray-100 transition">
-                                    @if (editingUserId == user.Id)
-                                    {   
-                                         <td class="px-6 py-4 border border-gray-300">
-                                            <select class="input-field" @bind="selectedQuestion.SelectedTechnology">
-                                                <option value=".NET MAUI">.NET MAUI</option>
-                                                <option value="Blazor">Blazor</option>
-                                                <option value="Web Development">Web Development</option>
-                                            </select>
-                                        </td>
-                                        <td class="px-6 py-4 border border-gray-300">
-                                            <select class="input-field" @bind="selectedQuestion.SelectedSubTechnologies">
-                                                <option value="html">HTML</option>
-                                                <option value="Csharp">C#</option>
-                                                <option value="SQL">SQL</option>
-                                            </select>
-                                        </td>
-                                        <td class="px-6 py-4 border border-gray-300">
-                                           <input type="text" class="input-field" @bind="selectedQuestion.NoOfQuestions" readonly />
-                                        </td>
-                                        <td class="px-6 py-4 border border-gray-300">
-                                            <select class="input-field" @bind="selectedQuestion.UserTypes">
-                                                <option value="Internal">Internal</option>
-                                                <option value="Candidate">Candidate</option>
-                                            </select>
-                                        </td>
-                                        <td class="px-6 py-4 border border-gray-300">
-                                           <input type="text" class="input-field" @bind="selectedQuestion.TotalQuestions" readonly />
-                                        </td>
-                                        <td class="px-6 py-4 border border-gray-300">
-                                            <input type="text" class="input-field" @bind="selectedQuestion.TimeLimit" readonly />
-                                        </td>
-                                        <td class="px-6 py-4 border border-gray-300 text-center">
-                                            <div class="flex justify-center items-center space-x-2">
-                                                <button class="btn-save" @onclick="SaveUser">✔ Save</button>
-                                                <button class="btn-cancel" @onclick="CancelEdit">✖ Cancel</button>
-                                            </div>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td class="px-6 py-4 border border-gray-300">@user.SelectedTechnology</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.SelectedSubTechnologies</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.NoOfQuestions</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.UserTypes</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.TotalQuestions</td>
-                                        <td class="px-6 py-4 border border-gray-300">@user.TimeLimit</td>
-                                        <td class="px-6 py-4 border border-gray-300 text-center">
-                                            <div class="flex justify-center items-center space-x-2">
-                                                <button class="btn-edit" @onclick="() => EditUser(user)">✏ Edit</button>
-                                                <button class="btn-delete" @onclick="() => DeleteUser(user.Id)">🗑 Delete</button>
-                                                 <button class="btn-view" @onclick="() => View()">View</button>
-                                            </div>
-                                        </td>
-                                    }
+                                @foreach (var user in Questions)
+                                {
+                                    <tr class="hover:bg-gray-100 transition">
+                                        @if (editingUserId == user.Id)
+                                        {   
+                                            <td class="px-6 py-4 border border-gray-300">
+                                                <select class="input-field" @bind="selectedQuestion.SelectedTechnology">
+                                                    <option value=".NET MAUI">.NET MAUI</option>
+                                                    <option value="Blazor">Blazor</option>
+                                                    <option value="Web Development">Web Development</option>
+                                                </select>
+                                            </td>
+                                            <td class="px-6 py-4 border border-gray-300">
+                                                <select class="input-field" @bind="selectedQuestion.SelectedSubTechnologies">
+                                                    <option value="html">HTML</option>
+                                                    <option value="Csharp">C#</option>
+                                                    <option value="SQL">SQL</option>
+                                                </select>
+                                            </td>
+                                            <td class="px-6 py-4 border border-gray-300">
+                                                <input type="text" class="input-field" @bind="selectedQuestion.NoOfQuestions" readonly />
+                                            </td>
+                                            <td class="px-6 py-4 border border-gray-300">
+                                                <select class="input-field" @bind="selectedQuestion.UserTypes">
+                                                    <option value="Internal">Internal</option>
+                                                    <option value="Candidate">Candidate</option>
+                                                </select>
+                                            </td>
+                                            <td class="px-6 py-4 border border-gray-300">
+                                                <input type="text" class="input-field" @bind="selectedQuestion.TotalQuestions" readonly />
+                                            </td>
+                                            <td class="px-6 py-4 border border-gray-300">
+                                                <input type="text" class="input-field" @bind="selectedQuestion.TimeLimit" readonly />
+                                            </td>
+                                            <td class="px-6 py-4 border border-gray-300 text-center">
+                                                <div class="flex justify-center items-center space-x-2">
+                                                    <button class="btn-save" @onclick="SaveUser">✔ Save</button>
+                                                    <button class="btn-cancel" @onclick="CancelEdit">✖ Cancel</button>
+                                                </div>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="px-6 py-4 border border-gray-300">@user.SelectedTechnology</td>
+                                            <td class="px-6 py-4 border border-gray-300">@user.SelectedSubTechnologies</td>
+                                            <td class="px-6 py-4 border border-gray-300">@user.NoOfQuestions</td>
+                                            <td class="px-6 py-4 border border-gray-300">@user.UserTypes</td>
+                                            <td class="px-6 py-4 border border-gray-300">@user.TotalQuestions</td>
+                                            <td class="px-6 py-4 border border-gray-300">@user.TimeLimit</td>
+                                            <td class="px-6 py-4 border border-gray-300 text-center">
+                                                <div class="flex justify-center items-center space-x-2">
+                                                    <button class="btn-edit" @onclick="() => EditUser(user)">✏ Edit</button>
+                                                    <button class="btn-delete" @onclick="() => DeleteUser(user.Id)">🗑 Delete</button>
+                                                    <button class="btn-view" @onclick="() => View()">View</button>
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8" class="px-6 py-6 text-center text-gray-500 border border-gray-300">No users found.</td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="8" class="px-6 py-6 text-center text-gray-500 border border-gray-300">No users found.</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -105,16 +114,16 @@
 
 <style>
     .input-field {
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        padding: 8px;
-        width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px;
+    width: 100%;
     }
     .btn-edit, .btn-delete, .btn-save, .btn-cancel,.btn-view {
-        padding: 8px 12px;
-        border-radius: 6px;
-        transition: background 0.3s;
-        color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.3s;
+    color: white;
     }
     .btn-edit { background-color: #facc15; }
     .btn-edit:hover { background-color: #eab308; }
@@ -128,30 +137,40 @@
     .btn-view:hover { background-color: #2563eb; }
 
     .btn-add {
-        padding: 8px 12px;
-        border-radius: 6px;
-        transition: background 0.3s;
-        color: white;
-        background-color: #1751c5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.3s;
+    color: white;
+    background-color: #1751c5;
     }
     .btn-add:hover { background-color: #1751c5; }
     .customDIv
     {
-        display: grid;
-        margin-left:auto;
-        margin-right:auto;
-        width:80%;
+    display: grid;
+    margin-left:auto;
+    margin-right:auto;
+    width:80%;
     }
     .addBtnClass
     {
-        justify-content: end;
-        display: flex;
+    justify-content: end;
+    display: flex;
     }
 </style>
-
+    <script>
+        window.saveAsFile = (filename, bytesBase64) => {
+		var link = document.createElement('a');
+		link.href = 'data:application/octet-stream;base64,' + bytesBase64;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	};
+    </script>
 @code {
     private List<AdminQuestionModel> Questions = new();
     private AdminQuestionModel selectedQuestion = new();
+
     private int? editingUserId = null;
 
     protected override void OnInitialized()
@@ -174,6 +193,90 @@
             NoOfQuestions = model.NoOfQuestions
         };
         editingUserId = model.Id;
+    }
+
+    public byte[] GeneratePdf(string title, string content)
+    {
+        @* // Add content with PDFsharp
+        var font = new XFont("Arial", 10);
+        gfx.DrawString(title, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopCenter);
+
+        // Add more detailed content using MigraDoc
+        Document doc = new Document();
+        Section section = doc.AddSection();
+        section.AddParagraph(content);
+
+        // Render MigraDoc content
+        PdfDocumentRenderer renderer = new PdfDocumentRenderer(true);
+        renderer.Document = doc;
+        renderer.RenderDocument();
+        renderer.PdfDocument.Save("output.pdf");
+
+        // Save PDF to memory stream
+        using (var stream = new MemoryStream())
+        {
+            document.Save(stream, false);
+            return stream.ToArray();
+        } *@
+
+        using (var memoryStream = new MemoryStream())
+        {
+            if (Capabilities.Build.IsCoreBuild)
+                GlobalFontSettings.FontResolver = new FailsafeFontResolver();
+
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = title;
+
+            PdfPage page = document.AddPage();
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            var width = page.Width;
+            var height = page.Height;
+            //gfx.DrawLine(XPens.Red, 0, 0, width, height);
+            //gfx.DrawLine(XPens.Red, width, 0, 0, height);
+
+            //var radius = width / 5;
+            //gfx.DrawEllipse(new XPen(XColors.Red, 1.5), XBrushes.White, new XRect(width / 2 - radius, height / 2 - radius, 2 * radius, 2 * radius));
+
+            XFont font = new XFont("Times New Roman", 20, XFontStyleEx.BoldItalic);
+            gfx.DrawString(content, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.Center);
+
+            @* // Add more detailed content using MigraDoc
+            Document doc = new Document();
+            Section section = doc.AddSection();
+            section.AddParagraph(content);
+
+            // Render MigraDoc content
+            PdfDocumentRenderer renderer = new PdfDocumentRenderer();
+            renderer.Document = doc;
+            renderer.RenderDocument();
+            renderer.PdfDocument.Save("output.pdf"); *@
+
+            document.Save(memoryStream);
+            return memoryStream.ToArray();
+        } 
+    }
+
+    private async Task GeneratePDF_File()
+    {
+        try
+        {
+
+            var pdfBytes = GeneratePdf("Sample Title", "This is sample content for the PDF.");
+            var fileName = "output.pdf";
+            var base64 = Convert.ToBase64String(pdfBytes);
+            await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, base64);
+
+            @* var pdf = GeneratePdf("Sample Title", "This is sample content for the PDF.");
+            var base64 = Convert.ToBase64String(pdf);
+            var url = $"data:application/pdf;base64,{base64}";
+            await JSRuntime.InvokeVoidAsync("open", url, "_blank"); *@
+        }
+        catch(Exception ex) 
+        {
+            Console.WriteLine(ex.StackTrace);
+        }
+
     }
 
     private void SaveUser()
