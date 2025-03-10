@@ -11,7 +11,10 @@
 @inject IJSRuntime JSRuntime
 
 <h3 class="heading">Result-Admin</h3>
-<button class="addBtnClass" @onclick="GeneratePDF_File">Download</button>
+<div class="download-button-container">
+    <button class="download-button" @onclick="GeneratePDF_File">Download</button>
+</div>
+
 <div class="user-info">
     <p><strong>User Name:</strong> John Doe</p>
     <p><strong>Email:</strong> john.doe@example.com</p>
@@ -65,6 +68,28 @@
     color: red;
     }
 </style>
+.download-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding-bottom: 20px; /* Adds spacing before the page ends */
+}
+
+.download-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
 
 <style>
     .user-info {
@@ -268,7 +293,8 @@
                         gfx = XGraphics.FromPdfPage(page);
                         yPoint = 40;
                     }
-                    gfx.DrawString(option, optionFont, XBrushes.Black, new XRect(60, yPoint, page.Width - 80, page.Height), XStringFormats.TopLeft);
+                    var optionColor = option == question.CorrectAnswer ? XBrushes.Green : (option == question.SelectedAnswer ? XBrushes.Red : XBrushes.Black);
+                    gfx.DrawString(option, optionFont, optionColor, new XRect(60, yPoint, page.Width - 80, page.Height), XStringFormats.TopLeft);
                     yPoint += 20;
                 }
 
@@ -279,7 +305,9 @@
                     yPoint = 40;
                 }
 
-                gfx.DrawString($"Correct Answer: {question.CorrectAnswer}", answerFont, XBrushes.Black, new XRect(40, yPoint, page.Width - 80, page.Height), XStringFormats.TopLeft);
+                var answerText = question.SelectedAnswer == question.CorrectAnswer ? "Correct Answer" : "Wrong Answer";
+                var answerColor = question.SelectedAnswer == question.CorrectAnswer ? XBrushes.Green : XBrushes.Red;
+                gfx.DrawString($"{answerText}: {question.CorrectAnswer}", answerFont, answerColor, new XRect(40, yPoint, page.Width - 80, page.Height), XStringFormats.TopLeft);
                 //yPoint += 30;
                 yPoint += lineHeight + 10;
             }
