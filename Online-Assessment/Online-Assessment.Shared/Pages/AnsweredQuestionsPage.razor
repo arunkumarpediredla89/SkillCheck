@@ -1,11 +1,17 @@
-﻿
+
 @page "/AnsweredQuestionsPage"
+@using Model
+@using PdfSharp
+@using PdfSharp.Drawing
+@using PdfSharp.Pdf
+@using global::Services
 @using static Online_Assessment.Shared.Pages.AssessmentPage
 @inject NavigationManager NavigationManager
 @inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
 
 <h3 class="heading">Result-Admin</h3>
- <button class="addBtnClass" @onclick="download">Download</button>
+<button class="addBtnClass" @onclick="GeneratePDF_File">Download</button>
 <div class="user-info">
     <p><strong>User Name:</strong> John Doe</p>
     <p><strong>Email:</strong> john.doe@example.com</p>
@@ -52,90 +58,103 @@
 
 <style>
     .correct {
-        color: green;
+    color: green;
     }
 
     .wrong {
-        color: red;
+    color: red;
     }
 </style>
 
 <style>
     .user-info {
-        max-width: 800px;
-        margin: 0 auto 20px;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
+    max-width: 800px;
+    margin: 0 auto 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    using Model;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    using MigraDoc.DocumentObjectModel;
     }
 
     .user-info p {
-        margin: 10px 0;
-        font-size: 18px;
+    margin: 10px 0;
+    font-size: 18px;
     }
 
     .user-info strong {
-        color: #333;
+    color: #333;
     }
 </style>
 
 <style>
     .questions-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     .question {
-        margin-bottom: 20px;
-        padding: 15px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
 
     .question-text {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
     }
 
     .options {
-        margin-bottom: 10px;
+    margin-bottom: 10px;
     }
 
     .option {
-        display: block;
-        width: 100%;
-        margin: 5px 0;
-        padding: 10px;
-        background-color: #f0f0f0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-align: left;
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
     }
 
     .option:hover {
-        background-color: #e0e0e0;
+    background-color: #e0e0e0;
     }
 
     .feedback {
-        font-weight: bold;
-        margin-top: 10px;
+    font-weight: bold;
+    margin-top: 10px;
     }
 
     .addBtnClass
     {
-        justify-content: right;
-        display: flex;
+    justify-content: right;
+    display: flex;
     }
 </style>
+
+    <script>
+        window.saveAsFile = (filename, bytesBase64) => {
+		var link = document.createElement('a');
+		link.href = 'data:application/octet-stream;base64,' + bytesBase64;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	};
+    </script>
 
 @code {
     private int CurrentQuestionIndex = 0;
@@ -156,6 +175,15 @@
         new QuestionModel { QuestionText = "Command to install React Native CLI globally?", Options = new List<string> { "npm install -g react-native-cli", "npm install -g create-react-native-app", "npm install -g react-native", "npm install -g npx" }, CorrectAnswer = "npm install -g react-native-cli" }
     };
 
+    private AdminModel user = new AdminModel(){
+        Email="john@gmail.com",
+        Comments="Good",
+        Score="7",
+        DifficultyLevel="Medium",
+        Experience=2,
+        Id=1,
+    };
+    
     private void CheckAnswer(QuestionModel question, string selectedOption)
     {
         question.SelectedAnswer = selectedOption;
@@ -169,12 +197,124 @@
         Questions[2].SelectedAnswer = "View"; // Correct
         Questions[3].SelectedAnswer = "Link"; // Wrong
         Questions[4].SelectedAnswer = "ScrollView"; // Correct
+        Questions[5].SelectedAnswer = "App.js"; // Wrong
+        Questions[6].SelectedAnswer = "npx react-native run-android"; // Correct
+        Questions[7].SelectedAnswer = "react-native run-android"; // Correct
+        Questions[8].SelectedAnswer = "npx react-native init"; // Correct
+        Questions[9].SelectedAnswer = "npm install -g react-native-cli"; // Correct
     }
 
-    private void download()
+    private async void download()
     {
-        
+        await GeneratePDF_File();
     }
+
+ 
+
+    private byte[] GeneratePdf(AdminModel user, List<QuestionModel> questions)
+    {
+        using (var memoryStream = new MemoryStream())
+        {
+            if (Capabilities.Build.IsCoreBuild)
+                PdfSharp.Fonts.GlobalFontSettings.FontResolver = new PdfSharp.Snippets.Font.FailsafeFontResolver();
+
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = "React Native Quiz";
+
+            PdfPage page = document.AddPage();
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            var width = page.Width;
+            var height = page.Height;
+
+             var content = "React Native Quiz";
+             var userInfo = $"Email: {user.Email}";
+             var score = $"Score: {questions.Count(q => q.SelectedAnswer == q.CorrectAnswer)}/{questions.Count}";
+             var result = questions.Count(q => q.SelectedAnswer == q.CorrectAnswer) >= 7 ? "Pass" : "Fail";
+             var resultColor = questions.Count(q => q.SelectedAnswer == q.CorrectAnswer) >= 7 ? "green" : "red";
+
+            XFont titleFont = new XFont("Times New Roman", 20, XFontStyleEx.BoldItalic);
+            XFont questionFont = new XFont("Times New Roman", 14, XFontStyleEx.Bold);
+            XFont optionFont = new XFont("Times New Roman", 12, XFontStyleEx.Regular);
+            XFont answerFont = new XFont("Times New Roman", 12, XFontStyleEx.Italic);
+            XFont resultFont = new XFont("Times New Roman", 16, XFontStyleEx.Bold);
+
+            
+
+            gfx.DrawString(content, titleFont, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopCenter);
+            gfx.DrawString(userInfo, questionFont, XBrushes.Black, new XRect(0, 20, page.Width, page.Height), XStringFormats.TopCenter);
+            gfx.DrawString(score, questionFont, XBrushes.Black, new XRect(0, 40, page.Width, page.Height), XStringFormats.TopCenter);
+
+            double yPoint = 80;
+            double lineHeight = 20;
+
+             if (yPoint + lineHeight > height - 40)
+            {
+                page = document.AddPage();
+                gfx = XGraphics.FromPdfPage(page);
+                yPoint = 40;
+            }
+
+             foreach (var question in questions)
+            {
+                gfx.DrawString(question.QuestionText, questionFont, XBrushes.Black, new XRect(40, yPoint, page.Width - 80, page.Height), XStringFormats.TopLeft);
+                yPoint += 20;
+
+                foreach (var option in question.Options)
+                {
+                    if (yPoint + lineHeight > height - 40)
+                    {
+                        page = document.AddPage();
+                        gfx = XGraphics.FromPdfPage(page);
+                        yPoint = 40;
+                    }
+                    gfx.DrawString(option, optionFont, XBrushes.Black, new XRect(60, yPoint, page.Width - 80, page.Height), XStringFormats.TopLeft);
+                    yPoint += 20;
+                }
+
+                if (yPoint + lineHeight > height - 40)
+                {
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    yPoint = 40;
+                }
+
+                gfx.DrawString($"Correct Answer: {question.CorrectAnswer}", answerFont, XBrushes.Black, new XRect(40, yPoint, page.Width - 80, page.Height), XStringFormats.TopLeft);
+                //yPoint += 30;
+                yPoint += lineHeight + 10;
+            }
+
+            XColor color = XColor.FromName(resultColor); // Assuming resultColor is a valid color name
+            XBrush brush = new XSolidBrush(color);
+            gfx.DrawString($"Result: {result}", resultFont, brush, new XRect(0, 60, page.Width, page.Height), XStringFormats.TopCenter);
+          
+             document.Save(memoryStream);
+            return memoryStream.ToArray();
+        }
+    }
+
+     private async Task GeneratePDF_File()
+    {
+        try
+        {
+
+            var pdfBytes = GeneratePdf(user, Questions);
+            var fileName = "output.pdf";
+            var base64 = Convert.ToBase64String(pdfBytes);
+            await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, base64);
+
+            @* var pdf = GeneratePdf("Sample Title", "This is sample content for the PDF.");
+            var base64 = Convert.ToBase64String(pdf);
+            var url = $"data:application/pdf;base64,{base64}";
+            await JSRuntime.InvokeVoidAsync("open", url, "_blank"); *@
+        }
+        catch(Exception ex) 
+        {
+            Console.WriteLine(ex.StackTrace);
+        }
+
+    }
+   
 }
 <style>
     .question {
