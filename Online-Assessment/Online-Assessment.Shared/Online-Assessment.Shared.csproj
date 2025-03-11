@@ -16,6 +16,8 @@
     <PackageReference Include="SkiaSharp" Version="3.118.0-preview.2.3" />
     <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1" />
     <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.9" />
+    <PackageReference Include="PDFsharp" Version="6.2.0-preview-3" />
+    <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.0-preview-3" />
   </ItemGroup>
 
 </Project>
