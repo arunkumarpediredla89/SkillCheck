@@ -1,145 +1,89 @@
 @page "/"
 
-@using Online_Assessment.Shared.Pages
 @using Microsoft.AspNetCore.Components
-@inject NavigationManager Navigation
 
-<div class="page">
-    <!-- Header Section -->
-    <div class="vertical-custom-stack-layout">
-        <label class="assessment-header" style="color:#0070AD;">
-            Online Assessment
-        </label>
-
-        <select class="form-select custom-dropdown" aria-label="Candidate options" @onchange="HandleSelectionChange" style="background-color: #17ABDA; color: white; margin-top: -20px; width: 150px;">
-            <option value="candidate" style="background-color: #ffffff; color: black;">Candidate</option>
-            <option value="internal" style="background-color: #ffffff; color: black;">COE Leads</option>
-            <option value="admin" style="background-color: #ffffff; color: black;">Admin</option>
-        </select>
-
-        <!-- Input Fields (Username & Password) -->
-        <div class="grid">
-            <div class="label" style="color: #707070; display: flex; align-items: center; justify-content: flex-end;">Username</div>
-            <div>
-                <input type="text" class="form-control" @bind="username" />
-            </div>
-
-            <div class="label" style="color: #707070; display: flex; align-items: center; justify-content: flex-end;">Password</div>
-            <div><input type="password" class="form-control" @bind="password" /></div>
+<div class="login-container">
+    <div class="left-section">
+        <div class="welcome-box">
+            <img src="capgemini-logo.png" alt="Capgemini Logo" class="logo" />
+            <h2>WELCOME TO</h2>
+            <h2>TEST GENIUS</h2>
         </div>
-
-        <!-- Login Button -->
-        <button class="btn btn-light" style="background-color: #e0e0e0; color: #0070ad; font-size: 20px; font-weight: bold; width: 150px;" 
-        @onclick="LoginButton_Clicked">Login</button>
-
-        <!-- Error Message (if any) -->
-        @if (loginFailed)
-        {
-            <div class="alert alert-danger" style="margin-top: 20px;">
-                Invalid username or password.
+    </div>
+    <div class="right-section">
+        <img src="capgemini-logo.png" alt="Capgemini Logo" class="login-logo" />
+        <div class="login-form">
+            <input type="text" placeholder="User Name" class="input-field" />
+            <input type="password" placeholder="Password" class="input-field" />
+            <button class="login-button">Login</button>
+        </div>
+        <div class="footer">
+            <p>2025 Capgemini. All rights reserved.</p>
+            <div>
+                <a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a>
             </div>
-        }
+        </div>
     </div>
 </div>
 
-    <style>
-
-        .vertical-custom-stack-layout{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            flex-direction: column;
-            gap:50px;
-            margin-top:150px;
-        }
-
-
-        .custom-dropdown 
-        {
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background-color: #17ABDA;
+<style>
+    .login-container {
+        display: flex;
+        height: 100vh;
+    }
+    .left-section {
+        flex: 1;
+        background: url('/images/background-image.jpg') no-repeat center center/cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .welcome-box {
+        background-color: rgba(0, 0, 50, 0.8);
         color: white;
-        padding-right: 20px;
-        background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%2210%22 viewBox=%220 0 10 10%22%3E%3Cpolygon fill=%22white%22 points=%225,10 10,5 0,5%22 /%3E%3C/svg%3E');
-        background-repeat: no-repeat;
-        background-position: right 15px top 10px;
-        }
-
-        .custom-dropdown:focus {
-        outline: none;
-        box-shadow: none;
-        }
-    </style>
-
-@code {
-
-    private string username = string.Empty;
-    private string password = string.Empty;
-
-    // Flag to show error message if login fails
-    private bool loginFailed = false;
-
-    private string selectedOption = "candidate";
-
-    private void HandleSelectionChange(ChangeEventArgs e)
-    {
-        loginFailed = false;
-        selectedOption = e.Value?.ToString() ?? string.Empty;
-        Console.WriteLine($"Selected option: {selectedOption}");
+        padding: 30px;
+        text-align: center;
     }
-
-    private void LoginButton_Clicked()
-    {
-        loginFailed = false;
-        // Predefined correct username and password
-        string correctUsername = "xyz@gmail.com";
-        string correctPassword = "user";
-        bool isValidCandidate = selectedOption == "candidate" && username == correctUsername && password == correctPassword ? true : false;
-        bool isValidInternalUser = selectedOption == "internal" && username == "abc@capgemini.com" && password == "capgemini" ? true : false;
-        bool isAdmin = selectedOption == "admin" && username == "Admin" && password == "admin" ? true : false;
-        // Check if entered username and password match the predefined values
-        //if (username == correctUsername && password == correctPassword)
-        if (isValidCandidate)
-        {
-            // If valid, navigate to "AssessmentPage" page
-            Navigation.NavigateTo("/assessmentPage");
-        }
-        else if (isAdmin)
-        {
-            // If valid, navigate to "Admin" page
-            //Navigation.NavigateTo("/adminPage");
-        Navigation.NavigateTo("/adminListPage", forceLoad: true);
-        }
-        else if(isValidInternalUser)
-        {
-            // If valid, navigate to "COE Leads" page
-            // Navigation.NavigateTo("/coeLeads");
-           Navigation.NavigateTo("/coeLeadListPage", forceLoad: true);
-        }
-        else
-        {
-            // If invalid, show error message
-            loginFailed = true;
-            Console.WriteLine("Login failed: Invalid username or password.");
-        }
+    .right-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
     }
-    private void UsernameClicked(MouseEventArgs e)
-    {
-        loginFailed = false;
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        align-items: center;
     }
-    private void PasswordClicked(MouseEventArgs e)
-    {
-        loginFailed = false;
+    .input-field {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
     }
-
-    public void Enter(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        {
-            LoginButton_Clicked();
-        }
+    .login-button {
+        background-color: #00E6E3;
+        border: none;
+        padding: 4px;
+        color: white;
+        border-radius: 15px;
+        cursor: pointer;
+        width: 50%;
+        text-align: center;
+        margin-top: 10px;
     }
-}
+    .footer {
+        position: absolute;
+        bottom: 20px;
+        text-align: center;
+    }
+    .footer a {
+        text-decoration: none;
+        color: #000;
+    }
+</style>
