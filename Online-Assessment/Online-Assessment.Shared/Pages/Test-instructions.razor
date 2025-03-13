@@ -1,0 +1,106 @@
+﻿@page "/Test-instructions"
+@inject NavigationManager Navigation
+
+<div class="container">
+    <div class="left-panel">
+        <img src="/images/capgemini-logo.png" alt="Capgemini Logo" class="logo" />
+        <h2>WELCOME TO <br /> <span class="highlight">TEST GENIUS</span></h2>
+        <p><strong>Test Duration:</strong> 20 minutes</p>
+        <p><strong>No of Questions:</strong> 10</p>
+        <p class="footer">2025 Capgemini. All rights reserved.</p>
+    </div>
+    
+    <div class="right-panel">
+        <h3>INSTRUCTIONS</h3>
+        <div class="instructions">
+            <h4>DO’s</h4>
+            <ul>
+                <li>Ensure a stable internet connection.</li>
+                <li>Use a laptop/desktop with Google Chrome, Microsoft Edge, or Mozilla Firefox.</li>
+                <li>Check system settings (webcam, microphone, and browser permissions).</li>
+                <li>Take the test in a quiet, well-lit environment.</li>
+                <li>Stay focused and manage time wisely.</li>
+                <li>Submit answers before the timer ends to avoid auto-submission.</li>
+                <li>Ensure your room is free from unauthorized persons during the test.</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <h4>DON’T’s</h4>
+            <ul>
+                <li>Do not refresh, close, or switch tabs during the test.</li>
+                <li>Do not attempt multiple logins—it may lead to auto-logout or disqualification.</li>
+                <li>Do not use external help or unauthorized materials.</li>
+                <li>Do not minimize the test window or change display settings during the exam.</li>
+                <li>Do not use multiple devices or screens.</li>
+                <li>Do not skip or ignore the time limit.</li>
+                <li>Do not attempt any malpractice—AI proctoring may be enabled.</li>
+            </ul>
+        </div>
+        <button class="start-btn" @onclick="StartAssessment">Start the assessment</button>
+    </div>
+</div>
+
+<style>
+.container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+.left-panel {
+    width: 30%;
+    background: #f8f8f8;
+    padding: 30px;
+    text-align: center;
+}
+
+.left-panel .logo {
+    width: 150px;
+}
+
+.left-panel h2 {
+    color: #5A1F78;
+    margin-top: 20px;
+}
+
+.highlight {
+    color: #5A1F78;
+    font-weight: bold;
+}
+
+.right-panel {
+    width: 70%;
+    padding: 40px;
+}
+
+.instructions h4 {
+    margin-top: 20px;
+    color: #5A1F78;
+}
+
+ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+ul li {
+    margin: 5px 0;
+}
+
+.start-btn {
+    background: #00BFFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+</style>
+
+@code {
+    private void StartAssessment()
+    {
+        Navigation.NavigateTo("/assessmentPage");
+    }
+}

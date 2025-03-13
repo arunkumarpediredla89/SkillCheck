@@ -20,4 +20,8 @@
     <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.0-preview-3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\imagess\" />
+  </ItemGroup>
+
 </Project>
